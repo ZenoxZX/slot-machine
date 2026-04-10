@@ -1,0 +1,19 @@
+{
+    "name": "SlotMachine.ConfigManagement.Editor",
+    "rootNamespace": "SlotMachine.ConfigManagement.Editor",
+    "references": [
+        "GUID:fe48493cad32144698a22f43494b04d0",
+        "GUID:5c681e9a6db42461ba3a64eabc2befc5"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
