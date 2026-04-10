@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SiegeWar.DI.Core.Scopes.SceneLifetimeScope
   parentReference:
-    TypeName: SiegeWar.DI.Core.Scopes.ProjectLifetimeScope
+    TypeName: SlotMachine.DI.Core.Scopes.ProjectLifetimeScope
   autoRun: 1
   autoInjectGameObjects: []
   m_MonoInstallers: []
