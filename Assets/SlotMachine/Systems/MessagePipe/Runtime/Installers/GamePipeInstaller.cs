@@ -8,7 +8,7 @@ namespace SlotMachine.MessagePipe.Installers
     {
         public void Install(IContainerBuilder builder)
         {
-            builder.Register<MainMenuPipe>(Lifetime.Singleton);
+            builder.Register<GamePipe>(Lifetime.Singleton);
         }
     }
 }
