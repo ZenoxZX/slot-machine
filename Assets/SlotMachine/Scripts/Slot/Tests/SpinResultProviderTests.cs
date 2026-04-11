@@ -34,11 +34,18 @@ namespace SlotMachine.Slot.Tests
 
             foreach (SpinResultEntry entry in s_ExpectedDistribution)
             {
-                Assert.IsTrue(counts.ContainsKey(entry.Result),
-                    $"{entry.Result} never appeared in 100 spins.");
+                Assert.IsTrue
+                (
+                    counts.ContainsKey(entry.Result),
+                    $"{entry.Result} never appeared in 100 spins."
+                );
 
-                Assert.AreEqual(entry.Count, counts[entry.Result],
-                    $"{entry.Result} expected {entry.Count} times but got {counts[entry.Result]}.");
+                Assert.AreEqual
+                (
+                    entry.Count,
+                    counts[entry.Result],
+                    $"{entry.Result} expected {entry.Count} times but got {counts[entry.Result]}."
+                );
             }
         }
 
@@ -49,8 +56,12 @@ namespace SlotMachine.Slot.Tests
             {
                 SpinResult result = m_Provider.GetNext();
 
-                Assert.AreNotEqual(SpinResult.None, result,
-                    $"Spin {i} returned None.");
+                Assert.AreNotEqual
+                (
+                    SpinResult.None,
+                    result,
+                    $"Spin {i} returned None."
+                );
             }
         }
 
@@ -61,8 +72,12 @@ namespace SlotMachine.Slot.Tests
 
             for (int i = 0; i < k_PoolSize; i++)
             {
-                Assert.AreEqual(m_Provider.GetNext(), otherProvider.GetNext(),
-                    $"Spin {i} differs between same-seed providers.");
+                Assert.AreEqual
+                (
+                    m_Provider.GetNext(),
+                    otherProvider.GetNext(),
+                    $"Spin {i} differs between same-seed providers."
+                );
             }
         }
 
@@ -76,11 +91,18 @@ namespace SlotMachine.Slot.Tests
 
             foreach (SpinResultEntry entry in s_ExpectedDistribution)
             {
-                Assert.IsTrue(counts.ContainsKey(entry.Result),
-                    $"{entry.Result} never appeared in second pool.");
+                Assert.IsTrue
+                (
+                    counts.ContainsKey(entry.Result),
+                    $"{entry.Result} never appeared in second pool."
+                );
 
-                Assert.AreEqual(entry.Count, counts[entry.Result],
-                    $"{entry.Result} expected {entry.Count} times but got {counts[entry.Result]} in second pool.");
+                Assert.AreEqual
+                (
+                    entry.Count,
+                    counts[entry.Result],
+                    $"{entry.Result} expected {entry.Count} times but got {counts[entry.Result]} in second pool."
+                );
             }
         }
 
@@ -137,19 +159,25 @@ namespace SlotMachine.Slot.Tests
         }
 
         [Test]
-        public void GetNext_MultipleSeeds_AllHaveExactDistribution(
-            [Values(0, 1, 999, 12345, int.MaxValue)] int seed)
+        public void GetNext_MultipleSeeds_AllHaveExactDistribution([Values(0, 1, 999, 12345, int.MaxValue)] int seed)
         {
             SpinResultProvider provider = new(seed);
             Dictionary<SpinResult, int> counts = CountResults(provider, k_PoolSize);
 
             foreach (SpinResultEntry entry in s_ExpectedDistribution)
             {
-                Assert.IsTrue(counts.ContainsKey(entry.Result),
-                    $"Seed {seed}: {entry.Result} never appeared.");
+                Assert.IsTrue
+                (
+                    counts.ContainsKey(entry.Result),
+                    $"Seed {seed}: {entry.Result} never appeared."
+                );
 
-                Assert.AreEqual(entry.Count, counts[entry.Result],
-                    $"Seed {seed}: {entry.Result} expected {entry.Count} but got {counts[entry.Result]}.");
+                Assert.AreEqual
+                (
+                    entry.Count,
+                    counts[entry.Result],
+                    $"Seed {seed}: {entry.Result} expected {entry.Count} but got {counts[entry.Result]}."
+                );
             }
         }
 
@@ -166,8 +194,12 @@ namespace SlotMachine.Slot.Tests
                     validCount++;
             }
 
-            Assert.AreEqual(k_PoolSize, validCount,
-                $"Expected {k_PoolSize} valid results but got {validCount}.");
+            Assert.AreEqual
+            (
+                k_PoolSize,
+                validCount,
+                $"Expected {k_PoolSize} valid results but got {validCount}."
+            );
         }
 
         [Test]
@@ -175,8 +207,12 @@ namespace SlotMachine.Slot.Tests
         {
             for (int i = 0; i < k_PoolSize; i++)
             {
-                Assert.AreEqual(i, m_Provider.CurrentIndex,
-                    $"CurrentIndex should be {i} before spin {i}.");
+                Assert.AreEqual
+                (
+                    i,
+                    m_Provider.CurrentIndex,
+                    $"CurrentIndex should be {i} before spin {i}."
+                );
 
                 m_Provider.GetNext();
             }
@@ -188,11 +224,15 @@ namespace SlotMachine.Slot.Tests
             for (int i = 0; i < k_PoolSize; i++)
                 m_Provider.GetNext();
 
-            Assert.AreEqual(0, m_Provider.CurrentIndex,
-                "CurrentIndex should reset to 0 after pool is exhausted.");
+            Assert.AreEqual
+            (
+                0,
+                m_Provider.CurrentIndex,
+                "CurrentIndex should reset to 0 after pool is exhausted."
+            );
         }
 
-        private static Dictionary<SpinResult, int> CountResults(SpinResultProvider provider, int count)
+        private static Dictionary<SpinResult, int> CountResults(ISpinResultProvider provider, int count)
         {
             Dictionary<SpinResult, int> counts = new();
 
@@ -209,7 +249,7 @@ namespace SlotMachine.Slot.Tests
             return counts;
         }
 
-        private static SpinResult[] CollectPool(SpinResultProvider provider, int count)
+        private static SpinResult[] CollectPool(ISpinResultProvider provider, int count)
         {
             SpinResult[] pool = new SpinResult[count];
 
@@ -219,10 +259,10 @@ namespace SlotMachine.Slot.Tests
             return pool;
         }
 
-        private static void AssertPeriod(SpinResult[] pool, SpinResult target, int expectedCount)
+        private static void AssertPeriod(IReadOnlyList<SpinResult> pool, SpinResult target, int expectedCount)
         {
-            int baseBlockSize = pool.Length / expectedCount;
-            int remainder = pool.Length % expectedCount;
+            int baseBlockSize = pool.Count / expectedCount;
+            int remainder = pool.Count % expectedCount;
             int blockStart = 0;
 
             for (int b = 0; b < expectedCount; b++)
@@ -237,8 +277,12 @@ namespace SlotMachine.Slot.Tests
                         hitCount++;
                 }
 
-                Assert.AreEqual(1, hitCount,
-                    $"{target} block {b} (spin {blockStart}-{blockEnd - 1}) has {hitCount}, expected 1.");
+                Assert.AreEqual
+                (
+                    1,
+                    hitCount,
+                    $"{target} block {b} (spin {blockStart}-{blockEnd - 1}) has {hitCount}, expected 1."
+                );
 
                 blockStart = blockEnd;
             }
