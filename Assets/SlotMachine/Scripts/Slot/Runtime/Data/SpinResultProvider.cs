@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using SlotMachine.Slot.Core;
 
 namespace SlotMachine.Slot.Data
 {
+    [UsedImplicitly]
     public class SpinResultProvider : ISpinResultProvider
     {
         private static readonly SpinResultEntry[] s_ResultTable = SpinResultTable.Entries;

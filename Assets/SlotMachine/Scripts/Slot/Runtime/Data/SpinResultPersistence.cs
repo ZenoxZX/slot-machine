@@ -1,8 +1,10 @@
 using System.IO;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace SlotMachine.Slot.Data
 {
+    [UsedImplicitly]
     public class SpinResultPersistence : ISpinResultPersistence
     {
         private const string k_FileName = "spin_state.bin";
