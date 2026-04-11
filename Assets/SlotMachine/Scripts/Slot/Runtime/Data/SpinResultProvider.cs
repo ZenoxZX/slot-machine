@@ -10,31 +10,32 @@ namespace SlotMachine.Slot.Data
 
         private static readonly SpinResultEntry[] s_ResultTable =
         {
-            new(SpinResult.Jackpot_Jackpot_Jackpot, 5),
-            new(SpinResult.Wild_Wild_Wild, 6),
-            new(SpinResult.Seven_Seven_Seven, 7),
-            new(SpinResult.Bonus_Bonus_Bonus, 8),
-            new(SpinResult.A_A_A, 9),
             new(SpinResult.A_Wild_Bonus, 13),
             new(SpinResult.Wild_Wild_Seven, 13),
             new(SpinResult.Jackpot_Jackpot_A, 13),
             new(SpinResult.Wild_Bonus_A, 13),
             new(SpinResult.Bonus_A_Jackpot, 13),
+            new(SpinResult.A_A_A, 9),
+            new(SpinResult.Bonus_Bonus_Bonus, 8),
+            new(SpinResult.Seven_Seven_Seven, 7),
+            new(SpinResult.Wild_Wild_Wild, 6),
+            new(SpinResult.Jackpot_Jackpot_Jackpot, 5),
         };
 
         private readonly SpinResult[] m_Pool = new SpinResult[k_PoolCapacity];
-        private readonly bool[] m_Occupied = new bool[k_PoolCapacity];
-        private readonly List<int> m_EmptySlots;
+        private readonly int[] m_BlockCursors = new int[s_ResultTable.Length];
+        private readonly int[] m_BlockStarts = new int[s_ResultTable.Length];
+        private readonly int[] m_BlockEnds = new int[s_ResultTable.Length];
+        private readonly List<int> m_Candidates;
         private readonly Random m_Random;
 
-        private bool m_IsPoolGenerated;
         private int m_CurrentIndex;
 
         public SpinResultProvider() : this(Environment.TickCount) { }
         public SpinResultProvider(int seed)
         {
             m_Random = new(seed);
-            m_EmptySlots = new(k_PoolCapacity);
+            m_Candidates = new(s_ResultTable.Length);
             GeneratePool();
         }
 
@@ -56,78 +57,59 @@ namespace SlotMachine.Slot.Data
 
         private void GeneratePool()
         {
-            if (m_IsPoolGenerated)
-                ClearCollection();
-
-            foreach (SpinResultEntry entry in s_ResultTable)
-                PlaceWithPeriod(entry.Result, entry.Count);
-
-            if (!m_IsPoolGenerated)
-                m_IsPoolGenerated = true;
-        }
-
-        private void ClearCollection()
-        {
-            for (int i = 0; i < k_PoolCapacity; i++)
+            for (int r = 0; r < s_ResultTable.Length; r++)
             {
-                m_Pool[i] = default;
-                m_Occupied[i] = false;
+                m_BlockCursors[r] = 0;
+                ComputeBlockRange(r);
+            }
+
+            for (int slot = 0; slot < k_PoolCapacity; slot++)
+            {
+                m_Candidates.Clear();
+                int minRemaining = int.MaxValue;
+
+                for (int r = 0; r < s_ResultTable.Length; r++)
+                {
+                    if (m_BlockCursors[r] >= s_ResultTable[r].Count)
+                        continue;
+
+                    if (slot < m_BlockStarts[r] || slot >= m_BlockEnds[r])
+                        continue;
+
+                    int remaining = m_BlockEnds[r] - slot;
+
+                    if (remaining < minRemaining)
+                    {
+                        minRemaining = remaining;
+                        m_Candidates.Clear();
+                        m_Candidates.Add(r);
+                    }
+                    else if (remaining == minRemaining)
+                    {
+                        m_Candidates.Add(r);
+                    }
+                }
+
+                if (m_Candidates.Count == 0)
+                    continue;
+
+                int chosen = m_Candidates[m_Random.Next(m_Candidates.Count)];
+                m_Pool[slot] = s_ResultTable[chosen].Result;
+                m_BlockCursors[chosen]++;
+
+                if (m_BlockCursors[chosen] < s_ResultTable[chosen].Count)
+                    ComputeBlockRange(chosen);
             }
         }
 
-        private void PlaceWithPeriod(SpinResult result, int count)
+        private void ComputeBlockRange(int resultIndex)
         {
+            int count = s_ResultTable[resultIndex].Count;
+            int cursor = m_BlockCursors[resultIndex];
             int baseBlockSize = k_PoolCapacity / count;
             int remainder = k_PoolCapacity % count;
-            int blockStart = 0;
-
-            for (int i = 0; i < count; i++)
-            {
-                int blockSize = baseBlockSize + (i < remainder ? 1 : 0);
-                int blockEnd = blockStart + blockSize;
-                m_EmptySlots.Clear();
-
-                for (int j = blockStart; j < blockEnd; j++)
-                {
-                    if (!m_Occupied[j])
-                        m_EmptySlots.Add(j);
-                }
-
-                int chosen;
-
-                if (m_EmptySlots.Count > 0)
-                {
-                    chosen = m_EmptySlots[m_Random.Next(m_EmptySlots.Count)];
-                }
-                else
-                {
-                    chosen = FindNearestEmpty(blockStart, blockEnd);
-                }
-
-                m_Pool[chosen] = result;
-                m_Occupied[chosen] = true;
-                blockStart = blockEnd;
-            }
-        }
-
-        private int FindNearestEmpty(int blockStart, int blockEnd)
-        {
-            int mid = (blockStart + blockEnd) / 2;
-
-            for (int offset = 1; offset < k_PoolCapacity; offset++)
-            {
-                int forward = mid + offset;
-
-                if (forward < k_PoolCapacity && !m_Occupied[forward])
-                    return forward;
-
-                int backward = mid - offset;
-
-                if (backward >= 0 && !m_Occupied[backward])
-                    return backward;
-            }
-
-            return -1;
+            m_BlockStarts[resultIndex] = cursor * baseBlockSize + Math.Min(cursor, remainder);
+            m_BlockEnds[resultIndex] = m_BlockStarts[resultIndex] + baseBlockSize + (cursor < remainder ? 1 : 0);
         }
     }
 }
