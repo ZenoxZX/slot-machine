@@ -1,7 +1,7 @@
 {
     "name": "SlotMachine.Slot",
     "rootNamespace": "SlotMachine.Slot",
-    "references": [],
+    "references": ["GUID:31d66fccc77ed4bc8be498de27ed23ad"],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
