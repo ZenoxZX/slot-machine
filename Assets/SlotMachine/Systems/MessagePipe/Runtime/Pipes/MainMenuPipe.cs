@@ -1,10 +1,10 @@
 using JetBrains.Annotations;
-using SlotMachine.Signals;
+using SlotMachine.Messages;
 
 namespace SlotMachine.MessagePipe.Pipes
 {
     [UsedImplicitly]
-    public class MainMenuPipe : GenericEventBus<ISignal>
+    public class MainMenuPipe : GenericEventBus<IMessage>
     {
         
     }

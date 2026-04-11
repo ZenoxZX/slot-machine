@@ -1,6 +1,6 @@
 {
-    "name": "SlotMachine.Signals",
-    "rootNamespace": "SlotMachine.Signals",
+    "name": "SlotMachine.Messages",
+    "rootNamespace": "SlotMachine.Messages",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
