@@ -2,6 +2,7 @@ namespace SlotMachine.Slot.Core
 {
     public enum SpinResult
     {
+        None = 0,
         A_Wild_Bonus,
         Wild_Wild_Seven,
         Jackpot_Jackpot_A,
