@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 using SlotMachine.MessagePipe.Pipes;
 using SlotMachine.Slot.Core;
 using SlotMachine.Slot.Data;
@@ -9,6 +10,7 @@ using VContainer.Unity;
 
 namespace SlotMachine.Slot.Controller
 {
+    [UsedImplicitly]
     public class SpinController : IInitializable, IDisposable
     {
         private const int k_ReelCount = 3;
