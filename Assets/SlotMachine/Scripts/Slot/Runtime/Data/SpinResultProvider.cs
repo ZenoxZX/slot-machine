@@ -14,18 +14,23 @@ namespace SlotMachine.Slot.Data
         private readonly int[] m_BlockStarts = new int[s_ResultTable.Length];
         private readonly int[] m_BlockEnds = new int[s_ResultTable.Length];
         private readonly List<int> m_Candidates;
-        private readonly Random m_Random;
+        private Random m_Random;
 
+        private int m_Seed;
         private int m_CurrentIndex;
 
         public SpinResultProvider() : this(Environment.TickCount) { }
-        public SpinResultProvider(int seed)
+        public SpinResultProvider(int seed) : this(seed, 0) { }
+        public SpinResultProvider(int seed, int startIndex)
         {
+            m_Seed = seed;
             m_Random = new(seed);
             m_Candidates = new(s_ResultTable.Length);
             GeneratePool();
+            m_CurrentIndex = startIndex;
         }
 
+        public int Seed => m_Seed;
         public int CurrentIndex => m_CurrentIndex;
         public int PoolSize => k_PoolCapacity;
 
@@ -37,6 +42,8 @@ namespace SlotMachine.Slot.Data
             if (m_CurrentIndex < k_PoolCapacity)
                 return result;
 
+            m_Seed = m_Random.Next();
+            m_Random = new Random(m_Seed);
             GeneratePool();
             m_CurrentIndex = 0;
             return result;

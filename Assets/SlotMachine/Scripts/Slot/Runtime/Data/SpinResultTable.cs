@@ -4,6 +4,8 @@ namespace SlotMachine.Slot.Data
 {
     public static class SpinResultTable
     {
+        public const int PoolCapacity = 100;
+        
         public static readonly SpinResultEntry[] Entries =
         {
             new(SpinResult.A_Wild_Bonus, 13),
@@ -17,7 +19,5 @@ namespace SlotMachine.Slot.Data
             new(SpinResult.Wild_Wild_Wild, 6),
             new(SpinResult.Jackpot_Jackpot_Jackpot, 5),
         };
-
-        public const int PoolCapacity = 100;
     }
 }
