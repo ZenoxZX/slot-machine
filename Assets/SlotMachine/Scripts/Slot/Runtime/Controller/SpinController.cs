@@ -56,7 +56,15 @@ namespace SlotMachine.Slot.Controller
             m_CurrentResult = spinResult.Resolve();
             StopMode stopMode = DetermineStopMode(m_CurrentResult);
 
+            // @Aygun:
+            // On every spin we will save the state to disk.
+            // This will be impact performance, we can optimize this.
+            // By only saving when the app goes to background or on application quit.
+            // For security reasons, we can save every n spins instead of every spin.
+            // And n count can take from scriptable object, which registered in VContainer.
+            // Instead knowing Persistence, we can raise a message to Pipe SaveRequestedMessage, and Persistence can listen to that message and save the state.
             m_Persistence.Save(m_Provider.Seed, m_Provider.CurrentIndex);
+            
             m_View.StartSpin(m_CurrentResult, stopMode);
         }
 
