@@ -6,21 +6,8 @@ namespace SlotMachine.Slot.Data
 {
     public class SpinResultProvider : ISpinResultProvider
     {
-        private const int k_PoolCapacity = 100;
-
-        private static readonly SpinResultEntry[] s_ResultTable =
-        {
-            new(SpinResult.A_Wild_Bonus, 13),
-            new(SpinResult.Wild_Wild_Seven, 13),
-            new(SpinResult.Jackpot_Jackpot_A, 13),
-            new(SpinResult.Wild_Bonus_A, 13),
-            new(SpinResult.Bonus_A_Jackpot, 13),
-            new(SpinResult.A_A_A, 9),
-            new(SpinResult.Bonus_Bonus_Bonus, 8),
-            new(SpinResult.Seven_Seven_Seven, 7),
-            new(SpinResult.Wild_Wild_Wild, 6),
-            new(SpinResult.Jackpot_Jackpot_Jackpot, 5),
-        };
+        private static readonly SpinResultEntry[] s_ResultTable = SpinResultTable.Entries;
+        private const int k_PoolCapacity = SpinResultTable.PoolCapacity;
 
         private readonly SpinResult[] m_Pool = new SpinResult[k_PoolCapacity];
         private readonly int[] m_BlockCursors = new int[s_ResultTable.Length];
