@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SlotMachine.Slot.Data
 {
-    public class SymbolSpriteContainer : ScriptableObject
+    public class SymbolViewData : ScriptableObject
     {
         [Header("Settings")]
         [SerializeField] private float m_BlurFadeDuration = 0.15f;
@@ -21,6 +21,8 @@ namespace SlotMachine.Slot.Data
         [SerializeField] private Sprite m_SevenBlur;
         [SerializeField] private Sprite m_WildBlur;
         [SerializeField] private Sprite m_JackpotBlur;
+        
+        public float BlurFadeDuration => m_BlurFadeDuration;
 
         public Sprite GetNormal(Symbol symbol) => symbol switch
         {
