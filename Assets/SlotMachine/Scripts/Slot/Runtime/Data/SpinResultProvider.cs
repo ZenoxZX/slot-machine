@@ -46,6 +46,7 @@ namespace SlotMachine.Slot.Data
 
             m_Seed = m_Random.Next();
             m_Random = new Random(m_Seed);
+            
             GeneratePool();
             m_CurrentIndex = 0;
             return result;
