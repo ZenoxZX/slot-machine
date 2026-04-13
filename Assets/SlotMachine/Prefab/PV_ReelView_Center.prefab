@@ -8,9 +8,37 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 538478672322106617, guid: d7333f540baa240a89f9bf96120b9f9e, type: 3}
+      propertyPath: m_ReelSide
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2130600865309768039, guid: d7333f540baa240a89f9bf96120b9f9e, type: 3}
+      propertyPath: m_ReelSide
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2542700085116036324, guid: d7333f540baa240a89f9bf96120b9f9e, type: 3}
+      propertyPath: m_ReelSide
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3770204235883747292, guid: d7333f540baa240a89f9bf96120b9f9e, type: 3}
       propertyPath: m_Name
       value: PV_ReelView_Center
+      objectReference: {fileID: 0}
+    - target: {fileID: 4152627872483101050, guid: d7333f540baa240a89f9bf96120b9f9e, type: 3}
+      propertyPath: m_ReelSide
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5081074275311224798, guid: d7333f540baa240a89f9bf96120b9f9e, type: 3}
+      propertyPath: m_ReelSide
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6659697317366639168, guid: d7333f540baa240a89f9bf96120b9f9e, type: 3}
+      propertyPath: m_ReelSide
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7480943940832519081, guid: d7333f540baa240a89f9bf96120b9f9e, type: 3}
+      propertyPath: m_ReelSide
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8826779196506314847, guid: d7333f540baa240a89f9bf96120b9f9e, type: 3}
       propertyPath: m_Pivot.x
@@ -90,6 +118,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8826779196506314847, guid: d7333f540baa240a89f9bf96120b9f9e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9023458480134114871, guid: d7333f540baa240a89f9bf96120b9f9e, type: 3}
+      propertyPath: m_ReelSide
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

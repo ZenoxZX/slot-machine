@@ -14,7 +14,9 @@ namespace SlotMachine.Slot.View
         private SymbolViewData m_Data;
         private MotionHandle m_MotionHandle;
         private bool m_IsBlur;
-        
+
+        public void Initialize(SymbolViewData data) => m_Data = data;
+
         public void SetSymbol(Symbol symbol)
         {
             m_NormalImage.sprite = m_Data.GetNormal(symbol);
