@@ -6,6 +6,7 @@ using SlotMachine.Slot.Data;
 using SlotMachine.Slot.Messages;
 using SlotMachine.Slot.Utils;
 using SlotMachine.Slot.View;
+using UnityEngine;
 using VContainer.Unity;
 
 namespace SlotMachine.Slot.Controller
@@ -55,6 +56,7 @@ namespace SlotMachine.Slot.Controller
             SpinResult spinResult = m_Provider.GetNext();
             m_CurrentResult = spinResult.Resolve();
             StopMode stopMode = DetermineStopMode(m_CurrentResult);
+            Debug.Log($"Spin Result: {spinResult}, Stop Mode: {stopMode}");
 
             // @Aygun:
             // On every spin we will save the state to disk.
