@@ -10,7 +10,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3770204235883747292, guid: d7333f540baa240a89f9bf96120b9f9e, type: 3}
       propertyPath: m_Name
-      value: PV_ReelView_Left Variant
+      value: PV_ReelView_Left
+      objectReference: {fileID: 0}
+    - target: {fileID: 5900416856116675677, guid: d7333f540baa240a89f9bf96120b9f9e, type: 3}
+      propertyPath: m_ReelIndex
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 8826779196506314847, guid: d7333f540baa240a89f9bf96120b9f9e, type: 3}
       propertyPath: m_Pivot.x
