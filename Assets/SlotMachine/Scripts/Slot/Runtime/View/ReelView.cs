@@ -7,9 +7,16 @@ using UnityEngine;
 
 namespace SlotMachine.Slot.View
 {
+    public enum ReelState
+    {
+        Idle,
+        Spinning,
+        Snapping
+    }
+
     public class ReelView : MonoBehaviour
     {
-        private const int k_SlotCount = 4;
+        private const int k_SlotCount = 5;
         private const int k_SymbolCount = 5;
 
         [SerializeField] private SymbolView[] m_Symbols;
@@ -17,27 +24,22 @@ namespace SlotMachine.Slot.View
         [SerializeField] private int m_ReelIndex;
 
         private RectTransform[] m_SymbolTransforms;
+        private float m_WrapThreshold;
         private float m_StripHeight;
-        private float m_TopY;
 
         private SpinTimingData m_TimingData;
         private GamePipe m_Pipe;
 
-        private bool m_IsSpinning;
-        private float m_Progress;
-        private float m_TotalDistance;
-        private float m_PrevDistance;
-        private SpinProfile m_Profile;
+        private ReelState m_State;
+        private float m_CurrentSpeed;
+        private float m_SpinTimer;
+        private float m_SpinDuration;
         private Symbol m_TargetSymbol;
-        private bool m_BlurActive;
 
-        private MotionHandle m_ProgressHandle;
+        private MotionHandle m_RampUpHandle;
+        private MotionHandle m_SnapHandle;
 
-        // Pre-computed symbol sequence for the entire spin
-        private Symbol[] m_SymbolSequence;
-        private int m_NextSymbolIndex;
-
-        public bool IsSpinning => m_IsSpinning;
+        public ReelState State => m_State;
 
         public void Initialize(SpinTimingData timingData, SymbolViewData symbolData, GamePipe pipe)
         {
@@ -53,52 +55,47 @@ namespace SlotMachine.Slot.View
             }
 
             m_StripHeight = m_CellHeight * k_SlotCount;
-            m_TopY = m_CellHeight * 1.5f;
+            m_WrapThreshold = -m_CellHeight * 2f;
 
             AssignRandomSymbols();
         }
 
         public void StartSpin(Symbol targetSymbol, StopMode stopMode)
         {
-            if (m_IsSpinning)
+            if (m_State != ReelState.Idle)
                 return;
 
             m_TargetSymbol = targetSymbol;
-            m_Profile = m_TimingData.GetProfile(stopMode);
-            m_TotalDistance = m_Profile.Rotations * m_StripHeight;
-            m_Progress = 0f;
-            m_PrevDistance = 0f;
-            m_IsSpinning = true;
-            m_NextSymbolIndex = 0;
+            m_SpinDuration = m_TimingData.GetSpinDuration(stopMode);
+            m_SpinTimer = 0f;
+            m_CurrentSpeed = 0f;
+            m_State = ReelState.Spinning;
 
-            BuildSymbolSequence();
             SetAllBlur(true);
-            CancelProgress();
+            CancelHandles();
 
-            m_ProgressHandle = LMotion.Create(0f, 1f, m_Profile.Duration)
-                .WithEase(m_Profile.ProgressCurve)
-                .WithOnComplete(OnSpinComplete)
-                .Bind(this, static (p, self) => self.m_Progress = p);
+            m_RampUpHandle = LMotion.Create(0f, m_TimingData.SpinSpeed, m_TimingData.RampUpDuration)
+                .WithEase(m_TimingData.RampUpEase)
+                .Bind(this, static (speed, self) => self.m_CurrentSpeed = speed);
         }
 
         public void Tick(float deltaTime)
         {
-            if (!m_IsSpinning)
+            if (m_State != ReelState.Spinning)
                 return;
 
-            float currentDistance = m_Progress * m_TotalDistance;
-            float delta = currentDistance - m_PrevDistance;
-            m_PrevDistance = currentDistance;
+            m_SpinTimer += deltaTime;
+
+            if (m_SpinTimer >= m_SpinDuration)
+            {
+                BeginSnap();
+                return;
+            }
+
+            float delta = m_CurrentSpeed * deltaTime;
 
             if (delta <= 0f)
                 return;
-
-            // Blur transition: switch to normal when in slow down phase (last ~20% of progress)
-            if (m_BlurActive && m_Progress > 0.8f)
-            {
-                SetAllBlur(false);
-                m_BlurActive = false;
-            }
 
             for (int i = 0; i < k_SlotCount; i++)
             {
@@ -106,90 +103,74 @@ namespace SlotMachine.Slot.View
                 Vector2 pos = rect.anchoredPosition;
                 pos.y -= delta;
 
-                if (pos.y <= -m_CellHeight * 2f)
+                if (pos.y <= m_WrapThreshold)
                 {
                     pos.y += m_StripHeight;
-
-                    if (m_NextSymbolIndex < m_SymbolSequence.Length)
-                        m_Symbols[i].SetSymbol(m_SymbolSequence[m_NextSymbolIndex++]);
-                    else
-                        m_Symbols[i].SetSymbol(GetRandomSymbol());
+                    m_Symbols[i].SetSymbol(GetRandomSymbol());
                 }
 
                 rect.anchoredPosition = pos;
             }
         }
 
-        private void BuildSymbolSequence()
+        private void BeginSnap()
         {
-            // Total wraps across all 4 slots during entire spin
-            int totalWraps = m_Profile.Rotations * k_SlotCount;
-            m_SymbolSequence = new Symbol[totalWraps];
+            m_CurrentSpeed = 0f;
+            m_State = ReelState.Snapping;
 
-            // Fill with random symbols, place target near the end
-            // Target needs to land on center row (index 1 from top after sort)
-            // Last few symbols before the end determine what's visible when stopped
-            // We place target at totalWraps - 3 so it ends up in center row
-            int targetIndex = totalWraps - 3;
-
-            for (int i = 0; i < totalWraps; i++)
-            {
-                if (i == targetIndex)
-                    m_SymbolSequence[i] = m_TargetSymbol;
-                else
-                    m_SymbolSequence[i] = GetRandomSymbol();
-            }
-        }
-
-        private void OnSpinComplete()
-        {
-            m_IsSpinning = false;
-            m_BlurActive = false;
-
-            SnapToGrid();
             SetAllBlur(false);
+            CancelHandles();
 
-            ReelStoppedMessage message = new(m_ReelIndex);
-            m_Pipe.Raise(in message);
+            // Place symbols on grid, one cellHeight above final position
+            PlaceSymbolsForSnap();
+
+            // Tween all symbols down by 1 cellHeight
+            m_SnapHandle = LMotion.Create(m_CellHeight, 0f, m_TimingData.SnapDuration)
+                .WithEase(m_TimingData.SnapEase)
+                .WithOnComplete(OnSnapComplete)
+                .Bind(this, static (offset, self) =>
+                {
+                    for (int i = 0; i < k_SlotCount; i++)
+                    {
+                        float baseY = self.GetGridY(i);
+                        self.m_SymbolTransforms[i].anchoredPosition = new Vector2(
+                            self.m_SymbolTransforms[i].anchoredPosition.x,
+                            baseY + offset);
+                    }
+                });
         }
 
-        private void SnapToGrid()
+        private void PlaceSymbolsForSnap()
         {
-            SortSymbolsByY();
+            // Index 0 = top buffer (+300), Index 2 = center (0), Index 4 = bottom buffer (-300)
+            // Target goes to center (index 2), rest random
+            m_Symbols[2].SetSymbol(m_TargetSymbol);
+            m_Symbols[0].SetSymbol(GetRandomSymbol());
+            m_Symbols[1].SetSymbol(GetRandomSymbol());
+            m_Symbols[3].SetSymbol(GetRandomSymbol());
+            m_Symbols[4].SetSymbol(GetRandomSymbol());
 
+            // Position all at grid + 1 cellHeight offset (will tween down)
             for (int i = 0; i < k_SlotCount; i++)
             {
-                float y = m_TopY - i * m_CellHeight;
+                float y = GetGridY(i) + m_CellHeight;
                 m_SymbolTransforms[i].anchoredPosition = new Vector2(
                     m_SymbolTransforms[i].anchoredPosition.x, y);
             }
         }
 
-        private void SortSymbolsByY()
+        private float GetGridY(int index) => (2 - index) * m_CellHeight;
+
+        private void OnSnapComplete()
         {
-            for (int i = 1; i < k_SlotCount; i++)
-            {
-                RectTransform keyRect = m_SymbolTransforms[i];
-                SymbolView keySymbol = m_Symbols[i];
-                float keyY = keyRect.anchoredPosition.y;
-                int j = i - 1;
+            m_State = ReelState.Idle;
 
-                while (j >= 0 && m_SymbolTransforms[j].anchoredPosition.y < keyY)
-                {
-                    m_SymbolTransforms[j + 1] = m_SymbolTransforms[j];
-                    m_Symbols[j + 1] = m_Symbols[j];
-                    j--;
-                }
-
-                m_SymbolTransforms[j + 1] = keyRect;
-                m_Symbols[j + 1] = keySymbol;
-            }
+            ReelStoppedMessage message = new(m_ReelIndex);
+            m_Pipe.Raise(in message);
         }
 
         private void SetAllBlur(bool isBlur)
         {
-            m_BlurActive = isBlur;
-
             for (int i = 0; i < k_SlotCount; i++)
             {
                 m_Symbols[i].SetBlur(isBlur);
@@ -207,12 +188,15 @@ namespace SlotMachine.Slot.View
 
         private static Symbol GetRandomSymbol() => (Symbol)Random.Range(0, k_SymbolCount);
 
-        private void OnDestroy() => CancelProgress();
+        private void OnDestroy() => CancelHandles();
 
-        private void CancelProgress()
+        private void CancelHandles()
         {
-            if (m_ProgressHandle.IsActive())
-                m_ProgressHandle.Cancel();
+            if (m_RampUpHandle.IsActive())
+                m_RampUpHandle.Cancel();
+
+            if (m_SnapHandle.IsActive())
+                m_SnapHandle.Cancel();
         }
     }
 }
