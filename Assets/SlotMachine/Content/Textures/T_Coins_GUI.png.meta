@@ -95,7 +95,205 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: T_Coins_GUI_0
+      rect:
+        serializedVersion: 2
+        x: 169
+        y: 707
+        width: 88
+        height: 458
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a0eefc2e736fd459aaa556e8dbe92eb5
+      internalID: 1302996066
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Coins_GUI_1
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 707
+        width: 185
+        height: 458
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 107f98125f4a0429ca685fb3673bc29e
+      internalID: -462309294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Coins_GUI_2
+      rect:
+        serializedVersion: 2
+        x: 597
+        y: 707
+        width: 309
+        height: 458
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e028d324fe39e46aebe61d6267770045
+      internalID: -97923447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Coins_GUI_3
+      rect:
+        serializedVersion: 2
+        x: 983
+        y: 707
+        width: 405
+        height: 458
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9a8fc0bc96580478fb5a2d769b661226
+      internalID: 469306478
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Coins_GUI_4
+      rect:
+        serializedVersion: 2
+        x: 1463
+        y: 707
+        width: 459
+        height: 458
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 517ff131f89fb4f16897ac48c5ec7ef9
+      internalID: 656302940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Coins_GUI_5
+      rect:
+        serializedVersion: 2
+        x: 126
+        y: 94
+        width: 459
+        height: 458
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 40dbc8f3b2a0a4f44ab3cc76996cef76
+      internalID: 443878226
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Coins_GUI_6
+      rect:
+        serializedVersion: 2
+        x: 699
+        y: 94
+        width: 404
+        height: 458
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8429fbec299004b659bb0ac0c84fcc82
+      internalID: 534396215
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Coins_GUI_7
+      rect:
+        serializedVersion: 2
+        x: 1239
+        y: 94
+        width: 309
+        height: 458
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 91a697546b864444ca709f3f2f421e62
+      internalID: 1401893581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: T_Coins_GUI_8
+      rect:
+        serializedVersion: 2
+        x: 1676
+        y: 94
+        width: 185
+        height: 458
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ca21246d61fbd46d3a003923ea66fe57
+      internalID: -558941917
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -109,7 +307,16 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      T_Coins_GUI_0: 1302996066
+      T_Coins_GUI_1: -462309294
+      T_Coins_GUI_2: -97923447
+      T_Coins_GUI_3: 469306478
+      T_Coins_GUI_4: 656302940
+      T_Coins_GUI_5: 443878226
+      T_Coins_GUI_6: 534396215
+      T_Coins_GUI_7: 1401893581
+      T_Coins_GUI_8: -558941917
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
