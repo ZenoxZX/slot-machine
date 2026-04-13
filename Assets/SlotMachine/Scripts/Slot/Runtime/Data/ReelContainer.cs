@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using SlotMachine.Slot.View;
 using UnityEngine;
 
@@ -15,12 +14,5 @@ namespace SlotMachine.Slot.Data
         public ReelView LeftReel => m_LeftReel;
         public ReelView MiddleReel => m_MiddleReel;
         public ReelView RightReel => m_RightReel;
-        
-        public IEnumerable<ReelView> GetReels()
-        {
-            yield return m_LeftReel;
-            yield return m_MiddleReel;
-            yield return m_RightReel;
-        }
     }
 }

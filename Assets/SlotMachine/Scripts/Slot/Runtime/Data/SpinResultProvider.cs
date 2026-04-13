@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using SlotMachine.Slot.Core;
+using VContainer;
 
 namespace SlotMachine.Slot.Data
 {
@@ -21,6 +22,7 @@ namespace SlotMachine.Slot.Data
         private int m_Seed;
         private int m_CurrentIndex;
 
+        [Inject]
         public SpinResultProvider() : this(Environment.TickCount) { }
         public SpinResultProvider(int seed) : this(seed, 0) { }
         public SpinResultProvider(int seed, int startIndex)

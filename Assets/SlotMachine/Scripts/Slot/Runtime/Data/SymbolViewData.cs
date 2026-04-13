@@ -1,8 +1,10 @@
+using SlotMachine.Core;
 using SlotMachine.Slot.Core;
 using UnityEngine;
 
 namespace SlotMachine.Slot.Data
 {
+    [CreateAssetMenu(fileName = nameof(SymbolViewData), menuName = GlobalEnvironmentVariables.AppName + "/Slot/" + nameof(SymbolViewData))]
     public class SymbolViewData : ScriptableObject
     {
         [Header("Settings")]
