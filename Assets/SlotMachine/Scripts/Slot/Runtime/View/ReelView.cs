@@ -172,18 +172,13 @@ namespace SlotMachine.Slot.View
         private void SetAllBlur(bool isBlur)
         {
             for (int i = 0; i < k_SlotCount; i++)
-            {
                 m_Symbols[i].SetBlur(isBlur);
-            }
         }
 
         private void AssignRandomSymbols()
         {
             for (int i = 0; i < k_SlotCount; i++)
-            {
                 m_Symbols[i].SetSymbol(GetRandomSymbol());
-                m_Symbols[i].SetBlur(false);
-            }
         }
 
         private static Symbol GetRandomSymbol() => (Symbol)Random.Range(0, k_SymbolCount);
