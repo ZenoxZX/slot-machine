@@ -133,6 +133,10 @@ SpinButtonView (click)
 2. Open the project with **Unity 6.3**
 3. Press Play
 
+## Tested On
+
+- Unity Editor (Play Mode)
+
 ## License
 
 This project is for demonstration purposes.
