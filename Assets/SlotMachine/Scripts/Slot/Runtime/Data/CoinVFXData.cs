@@ -16,8 +16,9 @@ namespace SlotMachine.Slot.Data
         [SerializeField] private int m_ACount = 10;
 
         [Header("Timing")]
-        [SerializeField] private float m_Duration = 2f;
+        [SerializeField] private float m_Duration = 4f;
         [SerializeField] private float m_SpawnInterval = 0.02f;
+        [SerializeField] private float m_FadeOutDuration = 0.2f;
 
         [Header("Motion")]
         [SerializeField] private float m_InitialSpeedMin = 600f;
@@ -39,11 +40,12 @@ namespace SlotMachine.Slot.Data
         [SerializeField] private int m_PoolSize = 30;
 
         [Header("Animation")]
-        [SerializeField] private float m_FrameRate = 24f;
+        [SerializeField] private float m_FrameRate = 30f;
         [SerializeField] private Sprite[] m_CoinFrames;
 
         public float Duration => m_Duration;
         public float SpawnInterval => m_SpawnInterval;
+        public float FadeOutDuration => m_FadeOutDuration;
         public float InitialSpeedMin => m_InitialSpeedMin;
         public float InitialSpeedMax => m_InitialSpeedMax;
         public float AngleMin => m_AngleMin;

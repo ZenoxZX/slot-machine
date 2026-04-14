@@ -21,6 +21,7 @@ namespace SlotMachine.Slot.View
         private readonly List<CoinView> m_Pool = new();
         private readonly List<CoinView> m_ActiveCoins = new();
 
+        private Vector2 m_BoundsHalf;
         private int m_CoinsToSpawn;
         private float m_SpawnTimer;
         private bool m_IsSpawning;
@@ -35,6 +36,10 @@ namespace SlotMachine.Slot.View
         void IInitializable.Initialize()
         {
             m_Pipe.SubscribeTo<SpinCompletedMessage>(OnSpinCompleted);
+
+            Rect rect = m_Reference.PoolParent.rect;
+            m_BoundsHalf = new Vector2(rect.width * 0.5f, rect.height * 0.5f);
+
             WarmPool();
         }
 
@@ -102,7 +107,7 @@ namespace SlotMachine.Slot.View
             float speed = Random.Range(m_Data.InitialSpeedMin, m_Data.InitialSpeedMax);
             Vector2 spawnPos = m_Reference.SpawnPoint.anchoredPosition;
 
-            coin.Launch(spawnPos, angle, speed, m_Data.Duration);
+            coin.Launch(spawnPos, angle, speed, m_Data.Duration, m_BoundsHalf);
             m_ActiveCoins.Add(coin);
         }
 
