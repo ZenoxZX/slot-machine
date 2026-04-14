@@ -1,3 +1,4 @@
+using SlotMachine.ConfigManagement;
 using SlotMachine.Core;
 using SlotMachine.Slot.Core;
 using SlotMachine.Slot.View;
@@ -6,7 +7,7 @@ using UnityEngine;
 namespace SlotMachine.Slot.Data
 {
     [CreateAssetMenu(fileName = nameof(CoinVFXData), menuName = GlobalEnvironmentVariables.AppName + "/Slot/" + nameof(CoinVFXData))]
-    public class CoinVFXData : ScriptableObject
+    public class CoinVFXData : ScriptableObject, IVisibleConfig
     {
         [Header("Coin Counts")]
         [SerializeField] private int m_JackpotCount = 30;
@@ -42,6 +43,9 @@ namespace SlotMachine.Slot.Data
         [Header("Animation")]
         [SerializeField] private float m_FrameRate = 30f;
         [SerializeField] private Sprite[] m_CoinFrames;
+
+        string IVisibleConfig.ConfigName => "Coin VFX";
+        string IVisibleConfig.Category => "Slot";
 
         public float Duration => m_Duration;
         public float SpawnInterval => m_SpawnInterval;

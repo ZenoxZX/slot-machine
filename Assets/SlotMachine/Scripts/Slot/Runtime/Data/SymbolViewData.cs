@@ -1,3 +1,4 @@
+using SlotMachine.ConfigManagement;
 using SlotMachine.Core;
 using SlotMachine.Slot.Core;
 using UnityEngine;
@@ -5,11 +6,11 @@ using UnityEngine;
 namespace SlotMachine.Slot.Data
 {
     [CreateAssetMenu(fileName = nameof(SymbolViewData), menuName = GlobalEnvironmentVariables.AppName + "/Slot/" + nameof(SymbolViewData))]
-    public class SymbolViewData : ScriptableObject
+    public class SymbolViewData : ScriptableObject, IVisibleConfig
     {
         [Header("Settings")]
         [SerializeField] private float m_BlurFadeDuration = 0.15f;
-        
+
         [Header("Normal Sprites")]
         [SerializeField] private Sprite m_A;
         [SerializeField] private Sprite m_Bonus;
@@ -23,7 +24,10 @@ namespace SlotMachine.Slot.Data
         [SerializeField] private Sprite m_SevenBlur;
         [SerializeField] private Sprite m_WildBlur;
         [SerializeField] private Sprite m_JackpotBlur;
-        
+
+        string IVisibleConfig.ConfigName => "Symbol View";
+        string IVisibleConfig.Category => "Slot";
+
         public float BlurFadeDuration => m_BlurFadeDuration;
 
         public Sprite GetNormal(Symbol symbol) => symbol switch

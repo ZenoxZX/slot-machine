@@ -1,4 +1,5 @@
 using LitMotion;
+using SlotMachine.ConfigManagement;
 using SlotMachine.Core;
 using SlotMachine.Slot.Core;
 using UnityEngine;
@@ -6,7 +7,7 @@ using UnityEngine;
 namespace SlotMachine.Slot.Data
 {
     [CreateAssetMenu(fileName = nameof(SpinTimingData), menuName = GlobalEnvironmentVariables.AppName + "/Slot/" + nameof(SpinTimingData))]
-    public class SpinTimingData : ScriptableObject
+    public class SpinTimingData : ScriptableObject, IVisibleConfig
     {
         [Header("Spin Speed")]
         [SerializeField] private float m_SpinSpeed = 3000f;
@@ -27,6 +28,9 @@ namespace SlotMachine.Slot.Data
         [SerializeField] private float m_BaseDuration = 0.9f;
         [SerializeField] private float m_NormalExtraDuration = 1.0f;
         [SerializeField] private float m_SlowExtraDuration = 2.25f;
+
+        string IVisibleConfig.ConfigName => "Spin Timing";
+        string IVisibleConfig.Category => "Slot";
 
         public float SpinSpeed => m_SpinSpeed;
         public float RampUpDuration => m_RampUpDuration;
