@@ -16,6 +16,7 @@ namespace SlotMachine.Slot.View
         private float m_Duration;
         private float m_FrameTimer;
         private int m_FrameIndex;
+        private float m_RotationSpeed;
         private bool m_Active;
 
         public bool IsActive => m_Active;
@@ -34,10 +35,12 @@ namespace SlotMachine.Slot.View
             m_Duration = duration;
             m_FrameTimer = 0f;
             m_FrameIndex = 0;
+            m_RotationSpeed = Random.Range(m_Data.RotationSpeedMin, m_Data.RotationSpeedMax);
             m_Active = true;
 
             m_RectTransform.anchoredPosition = startPosition;
             m_RectTransform.localScale = Vector3.one * m_Data.StartScale;
+            m_RectTransform.localEulerAngles = Vector3.zero;
             m_Image.enabled = true;
 
             if (m_Data.CoinFrames.Length > 0)
@@ -70,6 +73,11 @@ namespace SlotMachine.Slot.View
             // Perspective scale
             float scale = Mathf.Lerp(m_Data.StartScale, m_Data.EndScale, t);
             m_RectTransform.localScale = Vector3.one * scale;
+
+            // Z rotation
+            Vector3 euler = m_RectTransform.localEulerAngles;
+            euler.z += m_RotationSpeed * deltaTime;
+            m_RectTransform.localEulerAngles = euler;
 
             // Sprite sheet animation
             if (m_Data.CoinFrames.Length > 1)

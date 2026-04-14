@@ -30,13 +30,17 @@ namespace SlotMachine.Slot.Data
         [SerializeField] private float m_StartScale = 0.3f;
         [SerializeField] private float m_EndScale = 1.2f;
 
+        [Header("Rotation")]
+        [SerializeField] private float m_RotationSpeedMin = -360f;
+        [SerializeField] private float m_RotationSpeedMax = 360f;
+
         [Header("Prefab")]
         [SerializeField] private CoinView m_CoinPrefab;
         [SerializeField] private int m_PoolSize = 30;
 
         [Header("Animation")]
+        [SerializeField] private float m_FrameRate = 24f;
         [SerializeField] private Sprite[] m_CoinFrames;
-        [SerializeField] private float m_FrameRate = 12f;
 
         public float Duration => m_Duration;
         public float SpawnInterval => m_SpawnInterval;
@@ -47,10 +51,12 @@ namespace SlotMachine.Slot.Data
         public float Gravity => m_Gravity;
         public float StartScale => m_StartScale;
         public float EndScale => m_EndScale;
+        public float RotationSpeedMin => m_RotationSpeedMin;
+        public float RotationSpeedMax => m_RotationSpeedMax;
         public CoinView CoinPrefab => m_CoinPrefab;
         public int PoolSize => m_PoolSize;
-        public Sprite[] CoinFrames => m_CoinFrames;
         public float FrameRate => m_FrameRate;
+        public Sprite[] CoinFrames => m_CoinFrames;
 
         public int GetCoinCount(Symbol symbol) => symbol switch
         {
