@@ -13,7 +13,6 @@ namespace SlotMachine.Slot.View
 
         private SymbolViewData m_Data;
         private MotionHandle m_MotionHandle;
-        private bool m_IsBlur;
 
         public void Initialize(SymbolViewData data) => m_Data = data;
 
@@ -23,26 +22,22 @@ namespace SlotMachine.Slot.View
             m_BlurImage.sprite = m_Data.GetBlur(symbol);
         }
 
+        // @Aygun:
+        // Before: Both normal and blur alpha were tweened simultaneously (crossfade).
+        // This caused transparency during transition, revealing the background.
+        // After: Normal image always stays visible (alpha 1), only blur alpha is tweened.
+        // Both images share the same atlas so keeping normal enabled adds no extra draw call.
+        // Blur image renders on top of normal, so when blur alpha = 1 the normal is fully occluded.
         public void SetBlur(bool value)
         {
             CancelMotion();
-            m_IsBlur = value;
 
-            m_MotionHandle = LMotion.Create(0f, 1f, m_Data.BlurFadeDuration)
+            float from = value ? 0f : 1f;
+            float to = value ? 1f : 0f;
+
+            m_MotionHandle = LMotion.Create(from, to, m_Data.BlurFadeDuration)
                 .WithEase(Ease.Linear)
-                .Bind
-                (
-                    this,
-                    static (t, self) =>
-                    {
-                        Image normal = self.m_NormalImage;
-                        Image blur = self.m_BlurImage;
-                        float normalAlpha = self.m_IsBlur ? 1f - t : t;
-                        float blurAlpha = self.m_IsBlur ? t : 1f - t;
-                        normal.color = new Color(1f, 1f, 1f, normalAlpha);
-                        blur.color = new Color(1f, 1f, 1f, blurAlpha);
-                    }
-                );
+                .Bind(m_BlurImage, static (alpha, blur) => blur.color = new Color(1f, 1f, 1f, alpha));
         }
 
         private void OnDestroy() => CancelMotion();
