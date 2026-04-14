@@ -17,8 +17,9 @@ MonoBehaviour:
   m_SevenCount: 20
   m_BonusCount: 15
   m_ACount: 10
-  m_Duration: 2
+  m_Duration: 4
   m_SpawnInterval: 0.02
+  m_FadeOutDuration: 0.2
   m_InitialSpeedMin: 600
   m_InitialSpeedMax: 1000
   m_AngleMin: 50
@@ -26,8 +27,11 @@ MonoBehaviour:
   m_Gravity: 800
   m_StartScale: 0.3
   m_EndScale: 1.2
+  m_RotationSpeedMin: -360
+  m_RotationSpeedMax: 360
   m_CoinPrefab: {fileID: 5293668871485220461, guid: 29e646861033d4023b11fc5f2f56187d, type: 3}
   m_PoolSize: 30
+  m_FrameRate: 30
   m_CoinFrames:
   - {fileID: 1302996066, guid: 860519e2c40af4593896a15d2fcd213e, type: 3}
   - {fileID: -462309294, guid: 860519e2c40af4593896a15d2fcd213e, type: 3}
@@ -38,4 +42,3 @@ MonoBehaviour:
   - {fileID: 534396215, guid: 860519e2c40af4593896a15d2fcd213e, type: 3}
   - {fileID: 1401893581, guid: 860519e2c40af4593896a15d2fcd213e, type: 3}
   - {fileID: -558941917, guid: 860519e2c40af4593896a15d2fcd213e, type: 3}
-  m_FrameRate: 12
