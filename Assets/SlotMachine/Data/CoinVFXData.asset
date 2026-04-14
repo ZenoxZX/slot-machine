@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bffc0bb899704380bb8797eecc4f162, type: 3}
+  m_Name: CoinVFXData
+  m_EditorClassIdentifier: SlotMachine.Slot::SlotMachine.Slot.Data.CoinVFXData
+  m_JackpotCount: 30
+  m_WildCount: 25
+  m_SevenCount: 20
+  m_BonusCount: 15
+  m_ACount: 10
+  m_Duration: 2
+  m_SpawnInterval: 0.02
+  m_InitialSpeedMin: 600
+  m_InitialSpeedMax: 1000
+  m_AngleMin: 50
+  m_AngleMax: 130
+  m_Gravity: 800
+  m_StartScale: 0.3
+  m_EndScale: 1.2
+  m_CoinPrefab: {fileID: 5293668871485220461, guid: 29e646861033d4023b11fc5f2f56187d, type: 3}
+  m_PoolSize: 30
+  m_CoinFrames:
+  - {fileID: 1302996066, guid: 860519e2c40af4593896a15d2fcd213e, type: 3}
+  - {fileID: -462309294, guid: 860519e2c40af4593896a15d2fcd213e, type: 3}
+  - {fileID: -97923447, guid: 860519e2c40af4593896a15d2fcd213e, type: 3}
+  - {fileID: 469306478, guid: 860519e2c40af4593896a15d2fcd213e, type: 3}
+  - {fileID: 656302940, guid: 860519e2c40af4593896a15d2fcd213e, type: 3}
+  - {fileID: 443878226, guid: 860519e2c40af4593896a15d2fcd213e, type: 3}
+  - {fileID: 534396215, guid: 860519e2c40af4593896a15d2fcd213e, type: 3}
+  - {fileID: 1401893581, guid: 860519e2c40af4593896a15d2fcd213e, type: 3}
+  - {fileID: -558941917, guid: 860519e2c40af4593896a15d2fcd213e, type: 3}
+  m_FrameRate: 12
