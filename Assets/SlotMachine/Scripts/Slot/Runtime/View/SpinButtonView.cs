@@ -21,9 +21,7 @@ namespace SlotMachine.Slot.View
         private void OnDestroy()
         {
             m_Button.onClick.RemoveListener(OnSpinButtonClicked);
-
-            if (m_Pipe != null)
-                m_Pipe.UnsubscribeFrom<SpinCompletedMessage>(OnSpinCompleted);
+            m_Pipe.UnsubscribeFrom<SpinCompletedMessage>(OnSpinCompleted);
         }
 
         private void OnSpinButtonClicked()
