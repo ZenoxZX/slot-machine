@@ -122,7 +122,7 @@ SpinButtonView (click)
 
 | Game View |
 |---|
-| *Coming soon* |
+| ![Game View](.github/src/game-view.png) |
 
 ## How to Run
 
