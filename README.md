@@ -7,6 +7,7 @@ A 3x3 slot machine built with Unity 6.3. Players spin the reels to match symbols
 - Press the spin button to start the reels spinning from left to right with a slight random delay between each column.
 - Symbols on the middle row determine the outcome — matching all three wins coins.
 - Symbols switch to blurred variants during motion and fade back to normal as reels decelerate.
+- On a win, coins burst from the slot center with projectile motion, bouncing off screen edges.
 
 ## Symbols
 
@@ -24,11 +25,25 @@ Each symbol has a normal and blurred visual variant. A custom cylindrical projec
 
 Three distinct stop behaviors create tension based on the incoming result:
 
-| Type | Duration | Easing | Applied To |
-|------|----------|--------|------------|
-| Fast | < 100 ms | OutQuad | Left and middle columns (always) |
-| Normal | 1 sec | OutCubic | Right column (when left + middle match but right differs) |
-| Slow | 2.25 sec | OutQuart | Right column (when all three will match — maximum suspense) |
+| Type | Duration | Applied To |
+|------|----------|------------|
+| Fast | < 100 ms | Left and middle columns (always) |
+| Normal | 1 sec | Right column (when left + middle match but right differs) |
+| Slow | 2.25 sec | Right column (when all three will match — maximum suspense) |
+
+Left and middle reels always stop quickly. Only the right reel varies — building anticipation when the first two symbols match.
+
+## Coin VFX
+
+When all three symbols match (a win), coins erupt from the slot center:
+
+- **Projectile motion** with gravity — coins arc upward and scatter
+- **Perspective scaling** — coins grow as they "approach the camera"
+- **Bounce physics** — coins reflect off screen edges
+- **Sprite sheet animation** — rotating coin frames from a 9-frame sequence
+- **Z-axis rotation** — each coin spins at a random speed
+- **Fade out** — coins gracefully disappear after their lifetime
+- **Symbol-based quantity** — Jackpot spawns the most coins, A the fewest
 
 ## Probability System
 
@@ -59,6 +74,8 @@ Spin state (seed + current pool index) is saved to a binary file on every spin. 
 
 MVC pattern with VContainer for dependency injection and a custom event bus (GamePipe) for decoupled messaging.
 
+See [Project Structure](.github/src/project-structure.md) for the full directory layout and architecture overview.
+
 ```
 SpinButtonView (click)
   -> GamePipe: SpinRequestedMessage
@@ -68,32 +85,18 @@ SpinButtonView (click)
       -> DetermineStopMode()             -- Fast / Normal / Slow
       -> Persistence.Save()              -- binary file write
       -> ISlotView.StartSpin()           -- kick reel animations
-        -> ReelView x3                   -- per-reel scroll + deceleration
+        -> ReelView x3                   -- per-reel blur spin + snap tween
         -> GamePipe: ReelStoppedMessage  -- per reel
     -> SpinController (3 reels stopped)
       -> GamePipe: SpinCompletedMessage
         -> SpinButtonView (re-enable)
+        -> CoinVFXController (if win -> coin burst)
 ```
 
-### Folder Structure
+## Documentation
 
-```
-Assets/SlotMachine/
-├── Content/             -- Textures, Materials, Sprite Atlases
-├── Prefab/              -- Reel and Symbol prefabs (base + variants)
-├── Scripts/
-│   ├── DI/              -- VContainer installers
-│   └── Slot/
-│       ├── Core/        -- Enums, structs (Symbol, SpinResult, StopMode)
-│       ├── Data/        -- Model layer (provider, persistence, config)
-│       ├── View/        -- View layer (reel visuals, animations, shader effects)
-│       ├── Controller/  -- SpinController orchestration
-│       ├── Messages/    -- Event bus message types
-│       └── Utils/       -- Extension methods
-├── Resources/           -- DI bootstrap prefab (runtime loaded)
-├── Scenes/              -- SC_Game.unity
-└── Systems/             -- Reusable framework modules (DI, MessagePipe, Core)
-```
+- [Project Structure](.github/src/project-structure.md) — Full directory layout and architecture overview
+- [Config Management](docs/config-management.md) — Centralized editor tool for auto-discovering and managing all ScriptableObject configs
 
 ## Tests
 
@@ -115,9 +118,11 @@ Assets/SlotMachine/
 | Async | UniTask |
 | Pattern | MVC |
 
-## Planned
+## Screenshots
 
-- [ ] Coin particle VFX — projectile motion from slot center with perspective depth, coin count scaled by symbol rarity (Jackpot > Wild > Seven > Bonus > A)
+| Game View |
+|---|
+| *Coming soon* |
 
 ## How to Run
 
