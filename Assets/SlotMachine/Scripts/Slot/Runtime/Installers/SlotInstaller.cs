@@ -15,7 +15,9 @@ namespace SlotMachine.Slot.Installers
         [SerializeField] private SpinButtonView m_SpinButtonView;
         [SerializeField] private SymbolViewData m_SymbolViewData;
         [SerializeField] private SpinTimingData m_SpinTimingData;
-        [SerializeField] private ReelContainer m_ReelContainer;
+        [SerializeField] private CoinVFXData m_CoinVFXData;
+        [SerializeField] private CoinVFXReference m_CoinVFXReference;
+        [SerializeField] private ReelReference m_ReelReference;
 
         public void Install(IContainerBuilder builder)
         {
@@ -28,7 +30,11 @@ namespace SlotMachine.Slot.Installers
 
             builder.RegisterInstance(m_SymbolViewData).AsSelf();
             builder.RegisterInstance(m_SpinTimingData).AsSelf();
-            builder.RegisterInstance(m_ReelContainer).AsSelf();
+            builder.RegisterInstance(m_CoinVFXData).AsSelf();
+            builder.RegisterInstance(m_CoinVFXReference).AsSelf();
+            builder.RegisterInstance(m_ReelReference).AsSelf();
+
+            builder.RegisterEntryPoint<CoinVFXController>();
         }
     }
 }

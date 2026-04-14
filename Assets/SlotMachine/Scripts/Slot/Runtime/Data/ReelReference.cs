@@ -5,7 +5,7 @@ using UnityEngine;
 namespace SlotMachine.Slot.Data
 {
     [Serializable]
-    public class ReelContainer
+    public class ReelReference
     {
         [SerializeField] private ReelView m_LeftReel;
         [SerializeField] private ReelView m_MiddleReel;

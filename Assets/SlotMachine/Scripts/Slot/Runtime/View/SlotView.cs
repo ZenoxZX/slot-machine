@@ -9,7 +9,7 @@ namespace SlotMachine.Slot.View
 {
     public class SlotView : MonoBehaviour, ISlotView
     {
-        [Inject] private ReelContainer m_ReelContainer;
+        [Inject] private ReelReference m_ReelReference;
         [Inject] private SpinTimingData m_TimingData;
         [Inject] private SymbolViewData m_SymbolData;
         [Inject] private GamePipe m_Pipe;
@@ -21,9 +21,9 @@ namespace SlotMachine.Slot.View
 
         private void Start()
         {
-            m_Left = m_ReelContainer.LeftReel;
-            m_Middle = m_ReelContainer.MiddleReel;
-            m_Right = m_ReelContainer.RightReel;
+            m_Left = m_ReelReference.LeftReel;
+            m_Middle = m_ReelReference.MiddleReel;
+            m_Right = m_ReelReference.RightReel;
             m_Reels = new[] { m_Left, m_Middle, m_Right };
 
             for (int i = 0; i < m_Reels.Length; i++)
