@@ -23,8 +23,28 @@ namespace SlotMachine.Slot.Data
         private int m_CurrentIndex;
 
         [Inject]
-        public SpinResultProvider() : this(Environment.TickCount) { }
+        public SpinResultProvider(ISpinResultPersistence persistence)
+        {
+            m_Candidates = new(s_ResultTable.Length);
+
+            if (persistence.TryLoad(out int savedSeed, out int savedIndex))
+            {
+                m_Seed = savedSeed;
+                m_Random = new(savedSeed);
+                GeneratePool();
+                m_CurrentIndex = savedIndex;
+            }
+            else
+            {
+                m_Seed = Environment.TickCount;
+                m_Random = new(m_Seed);
+                GeneratePool();
+                m_CurrentIndex = 0;
+            }
+        }
+
         public SpinResultProvider(int seed) : this(seed, 0) { }
+
         public SpinResultProvider(int seed, int startIndex)
         {
             m_Seed = seed;
