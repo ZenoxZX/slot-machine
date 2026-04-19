@@ -32,8 +32,13 @@ Dinamik metin ve lokalizasyon desteği korunarak bu 1 batch maliyeti kabul edild
 - **SSAO renderer feature** `URP_Renderer` asset'inden kaldırıldı. Screen Space Ambient Occlusion 3D geometri ile çalışır; 2D bir sahnede sadece pipeline pass'i ve shader variant maliyeti üretiyordu.
 - **Camera Clear Flags** `Skybox` → `Solid Color` yapıldı ve `SkyboxMaterial` (Lighting → Environment) referansı `None` olarak bırakıldı. Böylece default skybox material'i build'e dahil edilmiyor.
 - **Depth Texture** ve **Opaque Texture** `URP_RPAsset` üzerinden kapatıldı. İkisi de shader'ların sahne derinliğini / rengini sample etmesi için kullanılır (soft particles, refraction, post-process derinlik efektleri). Slot sahnesinde bu feature'ları kullanan hiçbir shader yok, ama açık oldukları sürece her frame `CopyDepth` ve `CopyColor` pass'leri çalışıyor ve ekranı intermediate render target'a kopyalıyordu.
+- **HDR** `URP_RPAsset` üzerinden kapatıldı. HDR rendering 16-bit float render target kullanır ve bloom / tonemapping / color grading gibi post-process efektler için gerekir. Bu projede post-process stack tamamen boş, sprite renkleri 1.0'ı aşmıyor ve custom glow shader yok — HDR'ın sağladığı hiçbir feature kullanılmıyordu. Açık kaldığı sürece URP intermediate render target'a zorla düşüyor ve `BlitFinalToBackBuffer` pass'i bu intermediate'ı back buffer'a kopyalıyordu. Kapatılınca:
+  - Render target memory yarıya indi (1920×1080'de ~16 MB → ~8 MB)
+  - `Intermediate Texture: Auto` ayarı gerçekten devreye girdi ve URP intermediate'ı atladı
+  - `BlitFinalToBackBuffer` pass'i Frame Debugger'dan kalktı
+  - Mobile GPU'lar için daha uygun (float16 yerine 8-bit texture)
 
-Sonuç: Build'de gereksiz shader variant'ları ve texture referansları azaldı; Frame Debugger'dan `DrawSkybox`, `CopyDepth` ve `CopyColor` pass'leri tamamen kalktı.
+Sonuç: Build'de gereksiz shader variant'ları ve texture referansları azaldı; Frame Debugger'dan `DrawSkybox`, `CopyDepth`, `CopyColor` ve `BlitFinalToBackBuffer` pass'leri tamamen kalktı.
 
 ## Ölçümler (Worst Case: Spin + Coin Burst)
 
@@ -84,4 +89,4 @@ Sonuç: Build'de gereksiz shader variant'ları ve texture referansları azaldı;
 
 ## Ek Not — Ölçüm Metodolojisi
 
-Ekran görüntüleri alınırken `Main Camera` deaktif edildi. Amaç, Canvas çıktısını URP pipeline pass'lerinden (`BlitFinalToBackBuffer` gibi kaldırılamayan final pass'ler) izole ederek yalnızca UI katmanının maliyetini raporlamaktı. SSAO, Skybox, CopyDepth ve CopyColor pass'leri bu sahne için artık tetiklenmiyor (bkz. Optimizasyon #4); böylece kamera aktifken de Frame Debugger'da gölge pass neredeyse yok.
+Ekran görüntüleri alınırken `Main Camera` deaktif edildi. Amaç, Canvas çıktısını URP pipeline pass'lerinden izole ederek yalnızca UI katmanının maliyetini raporlamaktı. SSAO, Skybox, CopyDepth, CopyColor ve BlitFinalToBackBuffer pass'lerinin tamamı bu sahne için artık tetiklenmiyor (bkz. Optimizasyon #4); böylece kamera aktifken bile Frame Debugger'da gölge pass kalmadı.
