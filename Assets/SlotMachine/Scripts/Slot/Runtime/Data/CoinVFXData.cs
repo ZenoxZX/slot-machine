@@ -22,11 +22,11 @@ namespace SlotMachine.Slot.Data
         [SerializeField] private float m_FadeOutDuration = 0.2f;
 
         [Header("Motion")]
-        [SerializeField] private float m_InitialSpeedMin = 600f;
-        [SerializeField] private float m_InitialSpeedMax = 1000f;
+        [SerializeField] private float m_InitialSpeedMin = 6f;
+        [SerializeField] private float m_InitialSpeedMax = 10f;
         [SerializeField] private float m_AngleMin = 50f;
         [SerializeField] private float m_AngleMax = 130f;
-        [SerializeField] private float m_Gravity = 800f;
+        [SerializeField] private float m_Gravity = 8f;
 
         [Header("Scale (Perspective)")]
         [SerializeField] private float m_StartScale = 0.3f;

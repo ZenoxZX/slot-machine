@@ -20,11 +20,11 @@ MonoBehaviour:
   m_Duration: 4
   m_SpawnInterval: 0.02
   m_FadeOutDuration: 0.2
-  m_InitialSpeedMin: 600
-  m_InitialSpeedMax: 1000
+  m_InitialSpeedMin: 6
+  m_InitialSpeedMax: 10
   m_AngleMin: 50
   m_AngleMax: 130
-  m_Gravity: 800
+  m_Gravity: 8
   m_StartScale: 0.3
   m_EndScale: 1.2
   m_RotationSpeedMin: -360

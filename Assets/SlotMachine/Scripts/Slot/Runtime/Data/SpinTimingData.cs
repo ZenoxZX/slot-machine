@@ -10,7 +10,7 @@ namespace SlotMachine.Slot.Data
     public class SpinTimingData : ScriptableObject, IVisibleConfig
     {
         [Header("Spin Speed")]
-        [SerializeField] private float m_SpinSpeed = 3000f;
+        [SerializeField] private float m_SpinSpeed = 30f;
 
         [Header("Ramp Up")]
         [SerializeField] private float m_RampUpDuration = 0.15f;

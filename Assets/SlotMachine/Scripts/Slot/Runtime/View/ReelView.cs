@@ -20,7 +20,7 @@ namespace SlotMachine.Slot.View
         private const int k_SymbolCount = 5;
 
         [SerializeField] private SymbolView[] m_Symbols;
-        [SerializeField] private float m_CellHeight = 150f;
+        [SerializeField] private float m_CellHeight = 1.5f;
         [SerializeField] private int m_ReelIndex;
 
         private RectTransform[] m_SymbolTransforms;
