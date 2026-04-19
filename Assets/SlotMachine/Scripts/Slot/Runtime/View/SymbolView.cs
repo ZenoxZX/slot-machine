@@ -2,14 +2,13 @@ using LitMotion;
 using SlotMachine.Slot.Core;
 using SlotMachine.Slot.Data;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace SlotMachine.Slot.View
 {
     public class SymbolView : MonoBehaviour
     {
-        [SerializeField] private Image m_NormalImage;
-        [SerializeField] private Image m_BlurImage;
+        [SerializeField] private SpriteRenderer m_NormalImage;
+        [SerializeField] private SpriteRenderer m_BlurImage;
 
         private SymbolViewData m_Data;
         private MotionHandle m_MotionHandle;
