@@ -63,7 +63,6 @@ GameObject:
   - component: {fileID: 8790200209032833588}
   - component: {fileID: 6208018565485308286}
   - component: {fileID: 8872211747331513865}
-  - component: {fileID: 3389769330326683257}
   m_Layer: 5
   m_Name: Normal_Image
   m_TagString: Untagged
@@ -128,19 +127,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &3389769330326683257
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8720534604620527467}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9808934a1e0c47f19bfa930fa65e1de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: SlotMachine.Slot::SlotMachine.Slot.View.CylindricalMeshEffect
-  m_ReelSide: -0.7
 --- !u!1 &8941342407252443222
 GameObject:
   m_ObjectHideFlags: 0
@@ -152,7 +138,6 @@ GameObject:
   - component: {fileID: 3967675247348429424}
   - component: {fileID: 7653396350784542670}
   - component: {fileID: 5400800022249277341}
-  - component: {fileID: 3882811454120596455}
   m_Layer: 5
   m_Name: Blur_Image
   m_TagString: Untagged
@@ -217,16 +202,3 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &3882811454120596455
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8941342407252443222}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9808934a1e0c47f19bfa930fa65e1de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: SlotMachine.Slot::SlotMachine.Slot.View.CylindricalMeshEffect
-  m_ReelSide: -0.7
