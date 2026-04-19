@@ -23,7 +23,7 @@ namespace SlotMachine.Slot.View
         [SerializeField] private float m_CellHeight = 1.5f;
         [SerializeField] private int m_ReelIndex;
 
-        private RectTransform[] m_SymbolTransforms;
+        private Transform[] m_SymbolTransforms;
         private float m_WrapThreshold;
         private float m_StripHeight;
 
@@ -46,12 +46,12 @@ namespace SlotMachine.Slot.View
             m_TimingData = timingData;
             m_Pipe = pipe;
 
-            m_SymbolTransforms = new RectTransform[k_SlotCount];
+            m_SymbolTransforms = new Transform[k_SlotCount];
 
             for (int i = 0; i < k_SlotCount; i++)
             {
                 m_Symbols[i].Initialize(symbolData);
-                m_SymbolTransforms[i] = m_Symbols[i].GetComponent<RectTransform>();
+                m_SymbolTransforms[i] = m_Symbols[i].transform;
             }
 
             m_StripHeight = m_CellHeight * k_SlotCount;
@@ -99,8 +99,8 @@ namespace SlotMachine.Slot.View
 
             for (int i = 0; i < k_SlotCount; i++)
             {
-                RectTransform rect = m_SymbolTransforms[i];
-                Vector2 pos = rect.anchoredPosition;
+                Transform symbolTransform = m_SymbolTransforms[i];
+                Vector3 pos = symbolTransform.localPosition;
                 pos.y -= delta;
 
                 if (pos.y <= m_WrapThreshold)
@@ -109,7 +109,7 @@ namespace SlotMachine.Slot.View
                     m_Symbols[i].SetSymbol(GetRandomSymbol());
                 }
 
-                rect.anchoredPosition = pos;
+                symbolTransform.localPosition = pos;
             }
         }
 
@@ -133,16 +133,16 @@ namespace SlotMachine.Slot.View
                     for (int i = 0; i < k_SlotCount; i++)
                     {
                         float baseY = self.GetGridY(i);
-                        self.m_SymbolTransforms[i].anchoredPosition = new Vector2(
-                            self.m_SymbolTransforms[i].anchoredPosition.x,
-                            baseY + offset);
+                        Vector3 pos = self.m_SymbolTransforms[i].localPosition;
+                        pos.y = baseY + offset;
+                        self.m_SymbolTransforms[i].localPosition = pos;
                     }
                 });
         }
 
         private void PlaceSymbolsForSnap()
         {
-            // Index 0 = top buffer (+300), Index 2 = center (0), Index 4 = bottom buffer (-300)
+            // Index 0 = top buffer (+3), Index 2 = center (0), Index 4 = bottom buffer (-3)
             // Target goes to center (index 2), rest random
             m_Symbols[2].SetSymbol(m_TargetSymbol);
             m_Symbols[0].SetSymbol(GetRandomSymbol());
@@ -153,9 +153,9 @@ namespace SlotMachine.Slot.View
             // Position all at grid + 1 cellHeight offset (will tween down)
             for (int i = 0; i < k_SlotCount; i++)
             {
-                float y = GetGridY(i) + m_CellHeight;
-                m_SymbolTransforms[i].anchoredPosition = new Vector2(
-                    m_SymbolTransforms[i].anchoredPosition.x, y);
+                Vector3 pos = m_SymbolTransforms[i].localPosition;
+                pos.y = GetGridY(i) + m_CellHeight;
+                m_SymbolTransforms[i].localPosition = pos;
             }
         }
 
