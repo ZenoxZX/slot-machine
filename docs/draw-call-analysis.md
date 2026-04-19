@@ -27,12 +27,13 @@ Dinamik metin ve lokalizasyon desteği korunarak bu 1 batch maliyeti kabul edild
 
 ### 4. Kullanılmayan Render Pipeline Özelliklerinin Temizlenmesi
 
-2D UI tabanlı bir slot sahnesinde ihtiyaç duyulmayan render pipeline özellikleri asset/sahne seviyesinde devre dışı bırakıldı:
+2D tabanlı bir slot sahnesinde ihtiyaç duyulmayan render pipeline özellikleri asset/sahne seviyesinde devre dışı bırakıldı:
 
-- **SSAO renderer feature** `URP_Renderer` asset'inden kaldırıldı. Screen Space Ambient Occlusion 3D geometri ile çalışır; UI-only bir sahnede sadece pipeline pass'i ve shader variant maliyeti üretiyordu.
+- **SSAO renderer feature** `URP_Renderer` asset'inden kaldırıldı. Screen Space Ambient Occlusion 3D geometri ile çalışır; 2D bir sahnede sadece pipeline pass'i ve shader variant maliyeti üretiyordu.
 - **Camera Clear Flags** `Skybox` → `Solid Color` yapıldı ve `SkyboxMaterial` (Lighting → Environment) referansı `None` olarak bırakıldı. Böylece default skybox material'i build'e dahil edilmiyor.
+- **Depth Texture** ve **Opaque Texture** `URP_RPAsset` üzerinden kapatıldı. İkisi de shader'ların sahne derinliğini / rengini sample etmesi için kullanılır (soft particles, refraction, post-process derinlik efektleri). Slot sahnesinde bu feature'ları kullanan hiçbir shader yok, ama açık oldukları sürece her frame `CopyDepth` ve `CopyColor` pass'leri çalışıyor ve ekranı intermediate render target'a kopyalıyordu.
 
-Sonuç: Build'de gereksiz shader variant'ları ve texture referansları azaldı; Frame Debugger'da da `DrawSkybox` pass'i artık görünmüyor.
+Sonuç: Build'de gereksiz shader variant'ları ve texture referansları azaldı; Frame Debugger'dan `DrawSkybox`, `CopyDepth` ve `CopyColor` pass'leri tamamen kalktı.
 
 ## Ölçümler (Worst Case: Spin + Coin Burst)
 
@@ -83,4 +84,4 @@ Sonuç: Build'de gereksiz shader variant'ları ve texture referansları azaldı;
 
 ## Ek Not — Ölçüm Metodolojisi
 
-Ekran görüntüleri alınırken `Main Camera` deaktif edildi. Amaç, Canvas çıktısını URP pipeline pass'lerinden (CopyColor, BlitFinalToBackBuffer) izole ederek yalnızca UI katmanının maliyetini raporlamaktı. SSAO ve Skybox pass'leri bu sahne için artık tetiklenmiyor (bkz. Optimizasyon #4), ancak kalan pipeline pass'leri yine de Frame Debugger'da event olarak görünüyor ve slot makinesinin kendi maliyetini gölgeliyor.
+Ekran görüntüleri alınırken `Main Camera` deaktif edildi. Amaç, Canvas çıktısını URP pipeline pass'lerinden (`BlitFinalToBackBuffer` gibi kaldırılamayan final pass'ler) izole ederek yalnızca UI katmanının maliyetini raporlamaktı. SSAO, Skybox, CopyDepth ve CopyColor pass'leri bu sahne için artık tetiklenmiyor (bkz. Optimizasyon #4); böylece kamera aktifken de Frame Debugger'da gölge pass neredeyse yok.
