@@ -47,6 +47,9 @@ TagManager:
   - name: Symbol
     uniqueID: 1988175159
     locked: 0
+  - name: Coin
+    uniqueID: 2204795333
+    locked: 0
   m_RenderingLayers:
   - Default
   - Light Layer 1
