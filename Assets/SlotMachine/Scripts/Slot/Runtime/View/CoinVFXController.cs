@@ -37,8 +37,9 @@ namespace SlotMachine.Slot.View
         {
             m_Pipe.SubscribeTo<SpinCompletedMessage>(OnSpinCompleted);
 
-            Rect rect = m_Reference.PoolParent.rect;
-            m_BoundsHalf = new Vector2(rect.width * 0.5f, rect.height * 0.5f);
+            // @Aygun: Calculate bounds half based on the screen size. 
+            // Rect rect = m_Reference.PoolParent.rect;
+            // m_BoundsHalf = new Vector2(rect.width * 0.5f, rect.height * 0.5f);
 
             WarmPool();
         }
@@ -105,7 +106,7 @@ namespace SlotMachine.Slot.View
 
             float angle = Random.Range(m_Data.AngleMin, m_Data.AngleMax);
             float speed = Random.Range(m_Data.InitialSpeedMin, m_Data.InitialSpeedMax);
-            Vector2 spawnPos = m_Reference.SpawnPoint.anchoredPosition;
+            Vector2 spawnPos = m_Reference.SpawnPoint.position;
 
             coin.Launch(spawnPos, angle, speed, m_Data.Duration, m_BoundsHalf);
             m_ActiveCoins.Add(coin);

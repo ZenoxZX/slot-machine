@@ -1,12 +1,11 @@
 using SlotMachine.Slot.Data;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace SlotMachine.Slot.View
 {
     public class CoinView : MonoBehaviour
     {
-        [SerializeField] private Image m_Image;
+        [SerializeField] private SpriteRenderer m_SpriteRenderer;
 
         private RectTransform m_RectTransform;
         private CoinVFXData m_Data;
@@ -47,11 +46,11 @@ namespace SlotMachine.Slot.View
             m_RectTransform.anchoredPosition = startPosition;
             m_RectTransform.localScale = Vector3.one * m_Data.StartScale;
             m_RectTransform.localEulerAngles = Vector3.zero;
-            m_Image.enabled = true;
-            m_Image.color = Color.white;
+            m_SpriteRenderer.enabled = true;
+            m_SpriteRenderer.color = Color.white;
 
             if (m_Data.CoinFrames.Length > 0)
-                m_Image.sprite = m_Data.CoinFrames[0];
+                m_SpriteRenderer.sprite = m_Data.CoinFrames[0];
         }
 
         public void Tick(float deltaTime)
@@ -66,7 +65,7 @@ namespace SlotMachine.Slot.View
             {
                 m_FadeTimer += deltaTime;
                 float fadeT = Mathf.Clamp01(m_FadeTimer / m_Data.FadeOutDuration);
-                m_Image.color = new Color(1f, 1f, 1f, 1f - fadeT);
+                m_SpriteRenderer.color = new Color(1f, 1f, 1f, 1f - fadeT);
 
                 if (fadeT >= 1f)
                 {
@@ -123,7 +122,7 @@ namespace SlotMachine.Slot.View
                 {
                     m_FrameTimer -= frameDuration;
                     m_FrameIndex = (m_FrameIndex + 1) % m_Data.CoinFrames.Length;
-                    m_Image.sprite = m_Data.CoinFrames[m_FrameIndex];
+                    m_SpriteRenderer.sprite = m_Data.CoinFrames[m_FrameIndex];
                 }
             }
         }
@@ -131,7 +130,7 @@ namespace SlotMachine.Slot.View
         public void Deactivate()
         {
             m_Active = false;
-            m_Image.enabled = false;
+            m_SpriteRenderer.enabled = false;
         }
     }
 }

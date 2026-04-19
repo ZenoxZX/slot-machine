@@ -6,10 +6,10 @@ namespace SlotMachine.Slot.Data
     [Serializable]
     public class CoinVFXReference
     {
-        [SerializeField] private RectTransform m_SpawnPoint;
-        [SerializeField] private RectTransform m_PoolParent;
+        [SerializeField] private Transform m_SpawnPoint;
+        [SerializeField] private Transform m_PoolParent;
 
-        public RectTransform SpawnPoint => m_SpawnPoint;
-        public RectTransform PoolParent => m_PoolParent;
+        public Transform SpawnPoint => m_SpawnPoint;
+        public Transform PoolParent => m_PoolParent;
     }
 }
