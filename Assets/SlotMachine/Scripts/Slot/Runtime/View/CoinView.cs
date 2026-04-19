@@ -7,11 +7,11 @@ namespace SlotMachine.Slot.View
     {
         [SerializeField] private SpriteRenderer m_SpriteRenderer;
 
-        private RectTransform m_RectTransform;
+        private Transform m_Transform;
         private CoinVFXData m_Data;
 
         private Vector2 m_Velocity;
-        private Vector2 m_BoundsHalf;
+        private Rect m_Bounds;
         private float m_Elapsed;
         private float m_Duration;
         private float m_FrameTimer;
@@ -26,14 +26,14 @@ namespace SlotMachine.Slot.View
         public void Initialize(CoinVFXData data)
         {
             m_Data = data;
-            m_RectTransform = (RectTransform)transform;
+            m_Transform = transform;
         }
 
-        public void Launch(Vector2 startPosition, float angle, float speed, float duration, Vector2 boundsHalf)
+        public void Launch(Vector2 startPosition, float angle, float speed, float duration, Rect bounds)
         {
             float rad = angle * Mathf.Deg2Rad;
             m_Velocity = new Vector2(Mathf.Cos(rad) * speed, Mathf.Sin(rad) * speed);
-            m_BoundsHalf = boundsHalf;
+            m_Bounds = bounds;
             m_Elapsed = 0f;
             m_Duration = duration;
             m_FrameTimer = 0f;
@@ -43,9 +43,9 @@ namespace SlotMachine.Slot.View
             m_IsFading = false;
             m_Active = true;
 
-            m_RectTransform.anchoredPosition = startPosition;
-            m_RectTransform.localScale = Vector3.one * m_Data.StartScale;
-            m_RectTransform.localEulerAngles = Vector3.zero;
+            m_Transform.position = new Vector3(startPosition.x, startPosition.y, 0f);
+            m_Transform.localScale = Vector3.one * m_Data.StartScale;
+            m_Transform.localEulerAngles = Vector3.zero;
             m_SpriteRenderer.enabled = true;
             m_SpriteRenderer.color = Color.white;
 
@@ -84,33 +84,33 @@ namespace SlotMachine.Slot.View
             // Velocity integration (gravity on Y)
             m_Velocity.y -= m_Data.Gravity * deltaTime;
 
-            Vector2 pos = m_RectTransform.anchoredPosition;
+            Vector3 pos = m_Transform.position;
             pos.x += m_Velocity.x * deltaTime;
             pos.y += m_Velocity.y * deltaTime;
 
             // Bounce off screen bounds
-            if (pos.x > m_BoundsHalf.x || pos.x < -m_BoundsHalf.x)
+            if (pos.x > m_Bounds.xMax || pos.x < m_Bounds.xMin)
             {
                 m_Velocity.x = -m_Velocity.x;
-                pos.x = Mathf.Clamp(pos.x, -m_BoundsHalf.x, m_BoundsHalf.x);
+                pos.x = Mathf.Clamp(pos.x, m_Bounds.xMin, m_Bounds.xMax);
             }
 
-            if (pos.y > m_BoundsHalf.y || pos.y < -m_BoundsHalf.y)
+            if (pos.y > m_Bounds.yMax || pos.y < m_Bounds.yMin)
             {
                 m_Velocity.y = -m_Velocity.y;
-                pos.y = Mathf.Clamp(pos.y, -m_BoundsHalf.y, m_BoundsHalf.y);
+                pos.y = Mathf.Clamp(pos.y, m_Bounds.yMin, m_Bounds.yMax);
             }
 
-            m_RectTransform.anchoredPosition = pos;
+            m_Transform.position = pos;
 
             // Perspective scale
             float scale = Mathf.Lerp(m_Data.StartScale, m_Data.EndScale, t);
-            m_RectTransform.localScale = Vector3.one * scale;
+            m_Transform.localScale = Vector3.one * scale;
 
             // Z rotation
-            Vector3 euler = m_RectTransform.localEulerAngles;
+            Vector3 euler = m_Transform.localEulerAngles;
             euler.z += m_RotationSpeed * deltaTime;
-            m_RectTransform.localEulerAngles = euler;
+            m_Transform.localEulerAngles = euler;
 
             // Sprite sheet animation
             if (m_Data.CoinFrames.Length > 1)

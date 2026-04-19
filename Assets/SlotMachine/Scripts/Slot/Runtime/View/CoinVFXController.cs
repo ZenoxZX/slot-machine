@@ -21,7 +21,7 @@ namespace SlotMachine.Slot.View
         private readonly List<CoinView> m_Pool = new();
         private readonly List<CoinView> m_ActiveCoins = new();
 
-        private Vector2 m_BoundsHalf;
+        private Rect m_Bounds;
         private int m_CoinsToSpawn;
         private float m_SpawnTimer;
         private bool m_IsSpawning;
@@ -37,9 +37,11 @@ namespace SlotMachine.Slot.View
         {
             m_Pipe.SubscribeTo<SpinCompletedMessage>(OnSpinCompleted);
 
-            // @Aygun: Calculate bounds half based on the screen size. 
-            // Rect rect = m_Reference.PoolParent.rect;
-            // m_BoundsHalf = new Vector2(rect.width * 0.5f, rect.height * 0.5f);
+            Camera cam = m_Reference.Camera;
+            float z = -cam.transform.position.z;
+            Vector3 bottomLeft = cam.ViewportToWorldPoint(new Vector3(0f, 0f, z));
+            Vector3 topRight = cam.ViewportToWorldPoint(new Vector3(1f, 1f, z));
+            m_Bounds = Rect.MinMaxRect(bottomLeft.x, bottomLeft.y, topRight.x, topRight.y);
 
             WarmPool();
         }
@@ -108,7 +110,7 @@ namespace SlotMachine.Slot.View
             float speed = Random.Range(m_Data.InitialSpeedMin, m_Data.InitialSpeedMax);
             Vector2 spawnPos = m_Reference.SpawnPoint.position;
 
-            coin.Launch(spawnPos, angle, speed, m_Data.Duration, m_BoundsHalf);
+            coin.Launch(spawnPos, angle, speed, m_Data.Duration, m_Bounds);
             m_ActiveCoins.Add(coin);
         }
 
@@ -123,12 +125,15 @@ namespace SlotMachine.Slot.View
             }
         }
 
+        // @Aygun: This method can be optimized by using Unity's ObjectPool<T>
         private CoinView GetFromPool()
         {
             for (int i = 0; i < m_Pool.Count; i++)
             {
-                if (!m_Pool[i].IsActive)
-                    return m_Pool[i];
+                CoinView view = m_Pool[i];
+                
+                if (!view.IsActive)
+                    return view;
             }
 
             CoinView coin = Object.Instantiate(m_Data.CoinPrefab, m_Reference.PoolParent);

@@ -959,6 +959,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1719095944}
     - target: {fileID: 2489303019337867970, guid: fd50cb768bba141b6a59295b383b1cb5, type: 3}
+      propertyPath: m_SlotInstaller.m_CoinVFXReference.m_Camera
+      value: 
+      objectReference: {fileID: 68352577}
+    - target: {fileID: 2489303019337867970, guid: fd50cb768bba141b6a59295b383b1cb5, type: 3}
       propertyPath: m_SlotInstaller.m_ReelContainer.m_RightReel
       value: 
       objectReference: {fileID: 0}
