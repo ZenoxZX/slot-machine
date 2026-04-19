@@ -25,6 +25,15 @@ Buton arka planı, `SA_Main` içinde zaten bulunan **32×32 beyaz sprite'a** çe
 
 Dinamik metin ve lokalizasyon desteği korunarak bu 1 batch maliyeti kabul edildi.
 
+### 4. Kullanılmayan Render Pipeline Özelliklerinin Temizlenmesi
+
+2D UI tabanlı bir slot sahnesinde ihtiyaç duyulmayan render pipeline özellikleri asset/sahne seviyesinde devre dışı bırakıldı:
+
+- **SSAO renderer feature** `URP_Renderer` asset'inden kaldırıldı. Screen Space Ambient Occlusion 3D geometri ile çalışır; UI-only bir sahnede sadece pipeline pass'i ve shader variant maliyeti üretiyordu.
+- **Camera Clear Flags** `Skybox` → `Solid Color` yapıldı ve `SkyboxMaterial` (Lighting → Environment) referansı `None` olarak bırakıldı. Böylece default skybox material'i build'e dahil edilmiyor.
+
+Sonuç: Build'de gereksiz shader variant'ları ve texture referansları azaldı; Frame Debugger'da da `DrawSkybox` pass'i artık görünmüyor.
+
 ## Ölçümler (Worst Case: Spin + Coin Burst)
 
 Ölçümler spin devam ederken, coin particle burst aktifken ve tüm sembol + blur katmanları görünürken alındı.
@@ -74,6 +83,4 @@ Dinamik metin ve lokalizasyon desteği korunarak bu 1 batch maliyeti kabul edild
 
 ## Ek Not — Ölçüm Metodolojisi
 
-Ekran görüntüleri alınırken `Main Camera` deaktif edildi. Amaç, Canvas çıktısını URP pipeline pass'lerinden (SSAO, Skybox, CopyColor, BlitFinalToBackBuffer) izole ederek yalnızca UI katmanının maliyetini raporlamaktı. Bu pass'ler sahnede 3D geometri olmamasına rağmen Frame Debugger'da event olarak görünüyor ve slot makinesinin kendi maliyetini gölgeliyor.
-
-Teslim edilen projede kamera aktif bırakıldı; URP ve camera setup'ı proje genelinde yeniden kullanılabilir framework parçaları olduğu için tek amaçlı hale getirilmedi.
+Ekran görüntüleri alınırken `Main Camera` deaktif edildi. Amaç, Canvas çıktısını URP pipeline pass'lerinden (CopyColor, BlitFinalToBackBuffer) izole ederek yalnızca UI katmanının maliyetini raporlamaktı. SSAO ve Skybox pass'leri bu sahne için artık tetiklenmiyor (bkz. Optimizasyon #4), ancak kalan pipeline pass'leri yine de Frame Debugger'da event olarak görünüyor ve slot makinesinin kendi maliyetini gölgeliyor.
