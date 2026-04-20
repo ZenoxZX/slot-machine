@@ -1,8 +1,10 @@
 # World Space Render Analizi
 
-Bu doküman, slot makinesinin world space'e taşındıktan sonraki render davranışını ve ölçümlerini özetler. Daha önceki UI Canvas dönemi için bkz. [`draw-call-analysis.md`](draw-call-analysis.md).
+Case geri bildirimi doğrultusunda slot core gameplay'i UI Canvas'tan world space'e taşındı. Bu doküman taşıma sonrası alınan performans ölçümlerini özetler. Önceki UI Canvas dönemi için bkz. [`draw-call-analysis.md`](draw-call-analysis.md).
 
-> **TODO:** Bu dokümandaki ölçümler editor Play Mode'da alındı. Gerçek hedef davranışı yansıtması için tüm ölçümlerin **standalone build alınıp external Frame Debugger ile** tekrar yapılması ve sonuçların buraya eklenmesi gerekiyor. Editor overhead'i (scene view rendering, gizmos, profiler kendi yükü) çıktığında sayılar farklılaşacak.
+Ölçümler iki kaynaktan alındı:
+- **Windows Standalone Build** — Nsight Graphics ile external capture
+- **Editor Play Mode** — Unity Editor Profiler + Frame Debugger
 
 ## Sahne Yapısı
 
@@ -15,26 +17,63 @@ UI Canvas hiyerarşisi sökülüp yerine SpriteRenderer + Transform tabanlı bir
 
 Tüm sprite'lar `SA_Main` atlas'ından besleniyor — semboller, arka plan, çerçeve ve coin'ler aynı atlas'ı paylaşıyor.
 
-## Stats Paneli (Worst Case)
+## Nsight Graphics Ölçümleri (Windows Standalone, Worst Case)
 
-Aşağıdaki ölçüm spin sırasında, coin burst aktifken alındı.
+Üç ayrı Windows development build'i Nsight Graphics ile aynı worst case senaryosunda (spin + coin burst + reel snap) profil edildi.
+
+| Build | CPU Time | GPU Time | FPS aralığı |
+|-------|:-:|:-:|:-:|
+| UI Canvas (uGUI) | **488.3 µs** | **54.27 µs** | 2200 – 2500 |
+| World Space — SRP Batcher OFF | 1.2007 ms | 59.39 µs | 1200 – 1600 |
+| World Space — SRP Batcher ON | **1.1327 ms** | 60.44 µs | 1400 – 1700 |
+
+### UI Canvas Build
+
+![UI Canvas — CPU Time](../.github/src/world-space-analysis/nsight/ui/CPU_Time.png)
+![UI Canvas — GPU Time](../.github/src/world-space-analysis/nsight/ui/GPU_Time.png)
+![UI Canvas — FPS](../.github/src/world-space-analysis/nsight/ui/2200-2500_FPS.png)
+
+### World Space Build — SRP Batcher OFF
+
+![World Space no SRP — CPU Time](../.github/src/world-space-analysis/nsight/ws/CPU_Time.png)
+![World Space no SRP — GPU Time](../.github/src/world-space-analysis/nsight/ws/GPU_Time.png)
+![World Space no SRP — FPS](../.github/src/world-space-analysis/nsight/ws/1200-1600_FPS.png)
+
+### World Space Build — SRP Batcher ON
+
+![World Space SRP — CPU Time](../.github/src/world-space-analysis/nsight/ws_srp/CPU_Time.png)
+![World Space SRP — GPU Time](../.github/src/world-space-analysis/nsight/ws_srp/GPU_Time.png)
+![World Space SRP — FPS](../.github/src/world-space-analysis/nsight/ws_srp/1400-1700_FPS.png)
+
+### Ölçüm Özeti
+
+- GPU time üç build'de ~54-60 µs aralığında
+- CPU time: UI Canvas 488 µs, World Space (SRP OFF) 1.20 ms, World Space (SRP ON) 1.13 ms
+- SRP Batcher açık → kapalı geçişinde CPU time farkı 1.20 ms ↔ 1.13 ms
+- FPS: UI Canvas 2200-2500, World Space (SRP OFF) 1200-1600, World Space (SRP ON) 1400-1700
+
+## Editor Frame Debugger Ölçümleri
+
+Editor Play Mode'da alınan pipeline yapısı ve batch dağılımı.
+
+### Stats Paneli
+
+Aşağıdaki ölçüm editor Play Mode'da spin sırasında, coin burst aktifken alındı.
 
 ![Stats panel](../.github/src/world-space-analysis/stats-panel.png)
 
 | Metrik          | Değer    |
 |-----------------|----------|
-| Batches         | **34**   |
-| Saved by batching | **29** |
-| SetPass calls   | **8**    |
+| Batches         | 34       |
+| Saved by batching | 29     |
+| SetPass calls   | 8        |
 | Triangles       | 852      |
 | Vertices        | 996      |
 | FPS             | 1029.7   |
 | CPU main thread | 1.0 ms   |
 | Render thread   | 0.5 ms   |
 
-## Frame Debugger — SRP Batcher AÇIK
-
-URP varsayılan ayarı SRP Batcher açık.
+### Frame Debugger — SRP Batcher AÇIK
 
 ![Frame Debugger — SRP Batcher on](../.github/src/world-space-analysis/frame-debugger-srp-on.png)
 
@@ -58,7 +97,7 @@ Seçili `SRP Batch` event'inin detayında:
 
 Bu 15 draw call yalnızca reel sembollerinden değil; reel sembolleri + arka plan / çerçeve parçaları + ekran görüntüsünde aktif olan coin'ler tek SRP batch içinde toplanıyor (hepsi `SA_Main` atlas'ını paylaşıyor). Coin pool'u 30'a kadar büyüyebilir; aktif coin sayısı arttıkça aynı SRP batch'in draw call sayısı da büyür, ek bir batch break yaratmaz.
 
-## Frame Debugger — SRP Batcher KAPALI (Karşılaştırma)
+### Frame Debugger — SRP Batcher KAPALI (Karşılaştırma)
 
 Aynı sahnede SRP Batcher devre dışı bırakıldığında pipeline klasik dynamic batching'e düşüyor.
 
@@ -103,11 +142,12 @@ Projede **SRP Batcher açık** bırakıldı (URP varsayılanı).
 - **Tüm gameplay sprite'ları aynı SRP batch'de.** Reel sembolleri, arka plan, çerçeve ve coin'ler `SA_Main` atlas'ını paylaştığı için tek bir SRP batch içinde toplanıyor. Coin sayısı arttıkça aynı batch'in draw call sayısı büyür, ek batch break üretmez.
 - **TMP "SPIN" yazısı** ayrı font atlası kullandığı için Canvas tarafında ayrı bir batch oluşturuyor; lokalizasyon ve dinamik metin desteği için bilinçli olarak ayrı bırakıldı (bkz. `draw-call-analysis.md` Optimizasyon #3).
 
-## UI Canvas vs World Space — Ölçüm Karşılaştırması
+## UI Canvas vs World Space — Özet Karşılaştırma
 
-| Metrik | UI Canvas | World Space |
+Nsight'tan alınan Windows standalone ölçümleri:
+
+| Metrik | UI Canvas | World Space (SRP ON) |
 |--------|:-:|:-:|
-| Batches (worst case) | 4 | 34 |
-| SetPass calls | 4 | 8 |
-| CPU main thread | 0.8 ms | 1.0 ms |
-| Render thread | 0.3 ms | 0.5 ms |
+| CPU Time | 488.3 µs | 1.13 ms |
+| GPU Time | 54.27 µs | 60.44 µs |
+| FPS aralığı | 2200 – 2500 | 1400 – 1700 |
