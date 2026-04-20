@@ -19,7 +19,7 @@ A 3x3 slot machine built with Unity 6.3. Players spin the reels to match symbols
 | Bonus | 4 |
 | A | 5 (Lowest) |
 
-Each symbol has a normal and blurred visual variant. A custom cylindrical projection shader warps the flat UI sprites to simulate a 3D drum surface.
+Each symbol has a normal and blurred visual variant. The blur version is shown while the reel is in motion and fades back to the normal sprite as the reel decelerates.
 
 ## Stop Animations
 
@@ -93,10 +93,42 @@ SpinButtonView (click)
         -> CoinVFXController (if win -> coin burst)
 ```
 
+## Rendering
+
+- Core gameplay runs in world space with SpriteRenderer + Transform (reels, symbols, coin VFX)
+- HUD canvas (Screen Space — Camera) hosts only the SPIN button
+- All gameplay sprites share a single `SA_Main` atlas → reels, symbols, background and coins land in one SRP batch
+- Reel masking via `SpriteMask` + `maskInteraction = VisibleInsideMask`
+- Orthographic camera, URP 2D unlit sprite shader
+- Pipeline trimmed to `DrawTransparentObjects` + `DrawScreenSpaceUI` (SSAO, Skybox, CopyDepth, CopyColor and BlitFinalToBackBuffer removed)
+
+## Performance
+
+Worst case (spin + coin burst) measurements on Windows standalone builds, captured with Nsight Graphics:
+
+| Build | CPU | GPU | FPS |
+|-------|:-:|:-:|:-:|
+| UI Canvas (legacy) | 488 µs | 54 µs | 2200 – 2500 |
+| World Space — SRP Batcher OFF | 1.20 ms | 59 µs | 1200 – 1600 |
+| World Space — SRP Batcher ON | 1.13 ms | 60 µs | 1400 – 1700 |
+
+Full capture screenshots and editor Frame Debugger breakdowns live in [`docs/world-space-render-analysis.md`](docs/world-space-render-analysis.md).
+
+## Milestones
+
+| Tag | State |
+|-----|-------|
+| [`pre-worldspace-refactor`](https://github.com/ZenoxZX/slot-machine/releases/tag/pre-worldspace-refactor) | Final UI Canvas implementation, kept as an archeology anchor |
+| [`post-worldspace-refactor`](https://github.com/ZenoxZX/slot-machine/releases/tag/post-worldspace-refactor) | Core gameplay migrated to world space (SpriteRenderer + Transform) |
+
+Both releases ship Windows standalone development builds as attached assets.
+
 ## Documentation
 
 - [Project Structure](.github/src/project-structure.md) — Full directory layout and architecture overview
 - [Config Management](docs/config-management.md) — Centralized editor tool for auto-discovering and managing all ScriptableObject configs
+- [Batching Optimizations](docs/draw-call-analysis.md) — Atlas consolidation, pipeline pass cleanup, render target settings
+- [World Space Render Analysis](docs/world-space-render-analysis.md) — Nsight captures and editor Frame Debugger breakdowns for the three build variants
 
 ## Tests
 
@@ -136,6 +168,7 @@ SpinButtonView (click)
 ## Tested On
 
 - Unity Editor (Play Mode)
+- Windows Standalone (development build, Nsight Graphics profiled)
 
 ## License
 
